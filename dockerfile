@@ -8,7 +8,7 @@ ENV CONDA_PLUGINS_AUTO_ACCEPT_TOS=yes
 
 
 # Install necessary tools in one RUN command for efficiency and cleanup
-RUN apt-get update && apt-get install -y wget git && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y wget git unzip && rm -rf /var/lib/apt/lists/*
 
 # Install Miniconda
 RUN wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh && \
@@ -28,5 +28,8 @@ RUN conda install -y jupyter ipykernel pandas numpy opencv -c conda-forge
 # Pip packages
 RUN pip install --upgrade pip && pip install torch torchvision --index-url https://download.pytorch.org/whl/cu129
 RUN pip install reflex
+
+EXPOSE 8000
+EXPOSE 3000
 
 CMD ["bash"]

@@ -12,5 +12,7 @@
     }
   },
   "remoteUser": "root",
-  "runArgs": ["--gpus", "all"]
+  "runArgs": ["--gpus", "all"],
+  "forwardPorts": [8000, 3000],
+  "postStartCommand": "reflex run"
 }

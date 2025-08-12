@@ -14,5 +14,5 @@
   "remoteUser": "root",
   "runArgs": ["--gpus", "all"],
   "forwardPorts": [8000, 3000],
-  "postStartCommand": "reflex run"
+  "postStartCommand": "cd app && reflex init && reflex run"
 }

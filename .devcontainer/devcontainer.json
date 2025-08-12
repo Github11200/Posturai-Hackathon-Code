@@ -1,0 +1,16 @@
+{
+  "name": "Posturai Dev Container",
+  "build": {
+    "dockerfile": "../dockerfile"
+  },
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "terminal.integrated.shell.linux": "/bin/bash"
+      },
+      "extensions": ["ms-python.python", "ms-toolsai.jupyter"]
+    }
+  },
+  "remoteUser": "root",
+  "runArgs": ["--gpus", "all"]
+}

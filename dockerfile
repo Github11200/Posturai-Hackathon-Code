@@ -1,29 +1,32 @@
-FROM python:latest
+FROM nvidia/cuda:12.9.0-base-ubuntu24.04
 
-RUN apt-get update && apt-get -y upgrade
-RUN apt-get install -y --no-install-recommends \
-  git \
-  wget \
-  g++ \
-  ca-certificates \
-  && rm -rf /var/lib/apt/lists/*
+# Set environment variables
+ENV DEBIAN_FRONTEND=noninteractive
+ENV NVIDIA_VISIBLE_DEVICES=all
+ENV NVIDIA_DRIVER_CAPABILITIES=compute,utility
+ENV CONDA_PLUGINS_AUTO_ACCEPT_TOS=yes
 
-ENV PATH="/root/miniconda3/bin:${PATH}"
-ARG PATH="/root/miniconda3/bin:${PATH}"
 
-# Get the miniconda bash file
-RUN wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+# Install necessary tools in one RUN command for efficiency and cleanup
+RUN apt-get update && apt-get install -y wget git && rm -rf /var/lib/apt/lists/*
 
-# Run the file then delete it
-RUN bash Miniconda3-latest-Linux-x86_64.sh -b
-RUN rm -f Miniconda3-latest-Linux-x86_64.sh
+# Install Miniconda
+RUN wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh && \
+  bash miniconda.sh -b -p /miniconda && \
+  rm miniconda.sh
 
-RUN echo "Running the following miniconda version: $(conda --version)"
+ENV PATH="/miniconda/bin:${PATH}"
 
-RUN conda init bash
-RUN conda update conda
+# Accept conda terms of service to avoid prompts
+RUN conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/main && \
+  conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/r
 
-RUN conda create -n posturai
-RUN conda activate posturai
+# Conda packages
+RUN conda install -y python=3.10
+RUN conda install -y jupyter ipykernel pandas numpy opencv -c conda-forge
 
-RUN conda install python jupyter
+# Pip packages
+RUN pip install --upgrade pip && pip install torch torchvision --index-url https://download.pytorch.org/whl/cu129
+RUN pip install reflex
+
+CMD ["bash"]

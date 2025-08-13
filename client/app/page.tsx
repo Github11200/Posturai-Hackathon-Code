@@ -1,8 +1,15 @@
+// TODO: Make the video and text completely vertical
+// TODO: Add in a cool background like Raycast or leave it blank like Supabase
+// TODO: Add in Bento boxes for features
+// TODO: Small tweaks to the nav bar to make it look like Raycast's (add in a frosted effect as well)
+// TODO: Add in the pricing boxes
+// TODO: Update the buttons to have more of a Supabase or Stripe type of look
+
 import { Navbar } from "../components/navbar";
 
 export default function Home() {
   return (
-    <main className="w-full">
+    <main className="w-full overflow-x-hidden">
       <Navbar />
       {/* Hero Section */}
       <section
@@ -14,8 +21,8 @@ export default function Home() {
           aria-hidden
           className="pointer-events-none absolute inset-0 -z-10 flex items-center justify-center overflow-visible"
         >
-          <div className="animate-drift will-change-transform absolute -left-1/3 md:-left-1/4 top-[0%] w-[75vw] max-w-[880px] aspect-square rounded-full blur-[190px] opacity-25 sm:opacity-30 md:opacity-35 lg:opacity-40 xl:opacity-45 dark:opacity-25 dark:md:opacity-30 dark:xl:opacity-35 brightness-105 sm:brightness-110 lg:brightness-125 bg-[radial-gradient(circle_at_35%_40%,hsl(var(--primary))_0%,hsla(var(--primary)/0.45)_28%,transparent_70%)]" />
-          <div className="animate-drift-alt will-change-transform absolute -right-[30%] md:-right-[22%] lg:-right-[18%] bottom-[-12%] w-[70vw] max-w-[900px] aspect-square rounded-full blur-[210px] opacity-22 sm:opacity-28 md:opacity-32 lg:opacity-40 xl:opacity-45 dark:opacity-20 dark:md:opacity-25 dark:lg:opacity-30 brightness-105 sm:brightness-110 lg:brightness-120 bg-[radial-gradient(circle_at_80%_55%,hsl(var(--ring))_0%,hsla(var(--ring)/0.45)_26%,hsla(var(--primary)/0.28)_50%,transparent_72%)]" />
+          <div className="animate-drift will-change-transform absolute -left-[18%] md:-left-[14%] top-[0%] w-[70vw] max-w-[820px] aspect-square rounded-full blur-[180px] opacity-25 sm:opacity-30 md:opacity-35 lg:opacity-40 dark:opacity-25 bg-[radial-gradient(circle_at_35%_40%,hsl(var(--primary))_0%,hsla(var(--primary)/0.45)_28%,transparent_70%)]" />
+          <div className="animate-drift-alt will-change-transform absolute -right-[18%] md:-right-[12%] bottom-[-12%] w-[62vw] max-w-[820px] aspect-square rounded-full blur-[200px] opacity-22 sm:opacity-28 md:opacity-32 lg:opacity-40 dark:opacity-20 dark:md:opacity-25 dark:lg:opacity-30 bg-[radial-gradient(circle_at_70%_55%,hsl(var(--ring))_0%,hsla(var(--ring)/0.45)_26%,hsla(var(--primary)/0.28)_50%,transparent_72%)]" />
         </div>
         <div className="relative z-10 w-full max-w-7xl mx-auto px-6 md:px-8">
           <div className="grid items-stretch lg:grid-cols-2 gap-10 md:gap-14 lg:gap-12">

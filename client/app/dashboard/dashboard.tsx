@@ -8,11 +8,9 @@ import {
   NormalizedLandmark,
 } from "@mediapipe/tasks-vision";
 import * as ort from "onnxruntime-web";
-import { argMax, softmax } from "@/utils/utils";
-import { Button } from "@/components/ui/button";
-import { ModeToggle } from "@/components/theme-toggle";
+import { argMax, softmax } from "@/lib/utils";
 
-export default function Home() {
+export default function Dashboard() {
   const videoRef = useRef<HTMLVideoElement | null>(null); // hidden video element
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const poseLandmarkerRef = useRef<PoseLandmarker | null>(null);
@@ -154,17 +152,14 @@ export default function Home() {
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
         animationFrameRef.current = null;
-      }
-      // Stop media tracks
+      } // Stop media tracks
       if (mediaStreamRef.current) {
         mediaStreamRef.current.getTracks().forEach((t) => t.stop());
         mediaStreamRef.current = null;
-      }
-      // Clear video element
+      } // Clear video element
       if (videoRef.current) {
         videoRef.current.srcObject = null;
-      }
-      // Release pose landmarker
+      } // Release pose landmarker
       if (poseLandmarkerRef.current) {
         poseLandmarkerRef.current.close();
         poseLandmarkerRef.current = null;
@@ -178,8 +173,7 @@ export default function Home() {
     }
 
     return () => {
-      isMounted = false;
-      // If component unmounts or dependency changes, ensure cleanup
+      isMounted = false; // If component unmounts or dependency changes, ensure cleanup
       if (!showVideo) {
         stopAll();
       }
@@ -188,25 +182,31 @@ export default function Home() {
 
   return (
     <div>
-      <Button
-        onClick={() => {
-          setShowVideo((prev) => !prev);
-        }}
-      >
-        {showVideo ? "Hide Video" : "Show Video"}
-      </Button>
-      <ModeToggle />
+           {" "}
+      {/* <Button
+        onClick={() => {
+          setShowVideo((prev) => !prev);
+        }}
+      >
+        {showVideo ? "Hide Video" : "Show Video"}
+      </Button>
+      <ModeToggle /> */}
+           {" "}
       {showVideo ? (
         <div style={{ width: "100%", height: "100vh", background: "black" }}>
+                   {" "}
           <video ref={videoRef} style={{ display: "none" }} playsInline muted />
+                   {" "}
           <canvas
             ref={canvasRef}
             width={640}
             height={480}
             style={{ display: "block", margin: "0 auto" }}
           />
+                 {" "}
         </div>
       ) : null}
+         {" "}
     </div>
   );
 }

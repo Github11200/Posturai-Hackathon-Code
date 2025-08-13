@@ -1,11 +1,16 @@
 "use client";
 
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import {
-  PoseLandmarker, FilesetResolver, DrawingUtils
-} from "@mediapipe/tasks-vision"; 
+  PoseLandmarker,
+  FilesetResolver,
+  DrawingUtils,
+  NormalizedLandmark,
+} from "@mediapipe/tasks-vision";
 import * as ort from "onnxruntime-web";
 import { argMax, softmax } from "@/utils/utils";
+import { Button } from "@/components/ui/button";
+import { ModeToggle } from "@/components/theme-toggle";
 
 export default function Home() {
   const videoRef = useRef<HTMLVideoElement | null>(null); // hidden video element
@@ -13,20 +18,25 @@ export default function Home() {
   const poseLandmarkerRef = useRef<PoseLandmarker | null>(null);
   const animationFrameRef = useRef<number | null>(null);
   const onnxSessionRef = useRef<ort.InferenceSession | null>(null);
-  const color = useRef<string>("green")
+  const mediaStreamRef = useRef<MediaStream | null>(null); // <-- added
+  const color = useRef<string>("green");
+
+  const [showVideo, setShowVideo] = useState<boolean>(false);
 
   useEffect(() => {
     let isMounted = true;
 
     async function init() {
+      // Guard: if already initialized, skip
+      if (poseLandmarkerRef.current || mediaStreamRef.current) return;
+
       onnxSessionRef.current = await ort.InferenceSession.create(
         "/model.onnx",
         {
-          executionProviders: ["wasm"], // or "webgl" for GPU acceleration
+          executionProviders: ["wasm"],
         }
       );
 
-      // Load Mediapipe model
       const vision = await FilesetResolver.forVisionTasks(
         "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest/wasm"
       );
@@ -41,27 +51,35 @@ export default function Home() {
         numPoses: 1,
       });
 
-      // This exists since react re renders twice
-      if (!isMounted) return;
+      if (!isMounted) {
+        landmarker.close();
+        return;
+      }
 
       poseLandmarkerRef.current = landmarker;
 
-      // Start camera (video feed hidden)
       try {
-        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: true,
+        });
+        mediaStreamRef.current = stream;
         if (videoRef.current) {
           videoRef.current.srcObject = stream;
-          try { await videoRef.current.play(); } catch { /* autoplay may be blocked */ }
+          try {
+            await videoRef.current.play();
+          } catch {
+            /* autoplay may be blocked */
+          }
           detectPose();
         }
       } catch (err) {
-        // eslint-disable-next-line no-console
         console.error("Camera access denied or failed", err);
       }
     }
 
-    interface LandmarkPoint { x: number; y: number; z: number; visibility?: number }
-    interface PoseResult { landmarks?: LandmarkPoint[][] }
+    interface PoseResult {
+      landmarks?: NormalizedLandmark[][];
+    }
 
     async function runModel(results: PoseResult) {
       if (!results?.landmarks?.length) return;
@@ -70,43 +88,58 @@ export default function Home() {
       for (const landmarks of results.landmarks) {
         for (let i = 0; i < landmarks.length; ++i) {
           const lm = landmarks[i];
-            flatArray.push(lm.x, lm.y, lm.z, lm.visibility);
+          flatArray.push(lm.x, lm.y, lm.z, lm.visibility ?? 0);
         }
       }
-      if (!onnxSessionRef.current) return; // session not ready yet
+      if (!onnxSessionRef.current) return;
       const onnxTensor = new Float32Array(flatArray);
       const outputs = await onnxSessionRef.current.run({
         input: new ort.Tensor("float32", onnxTensor, [1, 132]),
       });
 
-      if (Math.round(argMax(softmax(outputs.output.cpuData))) === 1) color.current = "green"
-      else color.current = "red"
+      const out = (outputs as Record<string, ort.Tensor>).output;
+      if (out) {
+        // @ts-ignore
+        const cls = Math.round(argMax(softmax(out.cpuData as Float32Array)));
+        color.current = cls === 1 ? "green" : "red";
+      }
     }
 
-    async function detectPose() {
-      if (!videoRef.current || !poseLandmarkerRef.current || !canvasRef.current) return;
+    function detectPose() {
+      if (!videoRef.current || !poseLandmarkerRef.current || !canvasRef.current)
+        return;
       const ctx = canvasRef.current.getContext("2d");
       if (!ctx) return;
       const drawingUtils = new DrawingUtils(ctx);
-      
-      const renderLoop = () => {
-        // Black background
-        ctx.fillStyle = "black";
-        ctx.fillRect(0, 0, canvasRef.current!.width, canvasRef.current!.height);
 
-        // @ts-ignore
-        const results = poseLandmarkerRef.current.detectForVideo( // @ts-ignore
-          videoRef.current, 
+      const renderLoop = () => {
+        if (
+          !videoRef.current ||
+          !poseLandmarkerRef.current ||
+          !canvasRef.current
+        )
+          return;
+
+        ctx.fillStyle = "black";
+        ctx.fillRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+
+        const results = poseLandmarkerRef.current.detectForVideo(
+          videoRef.current,
           performance.now()
         ) as PoseResult;
 
         if (results.landmarks?.length) {
           void runModel(results);
           for (const landmarks of results.landmarks) {
-            // @ts-ignore
-            drawingUtils.drawLandmarks(landmarks, { radius: 3, color: color.current });
-            // @ts-ignore
-            drawingUtils.drawConnectors(landmarks, PoseLandmarker.POSE_CONNECTIONS, { color: "white" });
+            drawingUtils.drawLandmarks(landmarks, {
+              radius: 3,
+              color: color.current,
+            });
+            drawingUtils.drawConnectors(
+              landmarks,
+              PoseLandmarker.POSE_CONNECTIONS,
+              { color: "white" }
+            );
           }
         }
 
@@ -116,26 +149,64 @@ export default function Home() {
       renderLoop();
     }
 
-    init();
+    function stopAll() {
+      // Stop animation
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+        animationFrameRef.current = null;
+      }
+      // Stop media tracks
+      if (mediaStreamRef.current) {
+        mediaStreamRef.current.getTracks().forEach((t) => t.stop());
+        mediaStreamRef.current = null;
+      }
+      // Clear video element
+      if (videoRef.current) {
+        videoRef.current.srcObject = null;
+      }
+      // Release pose landmarker
+      if (poseLandmarkerRef.current) {
+        poseLandmarkerRef.current.close();
+        poseLandmarkerRef.current = null;
+      }
+    }
+
+    if (showVideo) {
+      void init();
+    } else {
+      stopAll();
+    }
 
     return () => {
       isMounted = false;
-      if (animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current);
+      // If component unmounts or dependency changes, ensure cleanup
+      if (!showVideo) {
+        stopAll();
       }
     };
-  }, []);
+  }, [showVideo]);
 
   return (
-    <div style={{ width: "100%", height: "100vh", background: "black" }}>
-      {/* Hidden video source */}
-      <video ref={videoRef} style={{ display: "none" }} playsInline muted />
-      <canvas
-        ref={canvasRef}
-        width={640}
-        height={480}
-        style={{ display: "block", margin: "0 auto" }}
-      />
+    <div>
+      <Button
+        onClick={() => {
+          setShowVideo((prev) => !prev);
+        }}
+      >
+        {showVideo ? "Hide Video" : "Show Video"}
+      </Button>
+      <ModeToggle />
+      {showVideo ? (
+        <div style={{ width: "100%", height: "100vh", background: "black" }}>
+          <video ref={videoRef} style={{ display: "none" }} playsInline muted />
+          <canvas
+            ref={canvasRef}
+            width={640}
+            height={480}
+            style={{ display: "block", margin: "0 auto" }}
+          />
+        </div>
+      ) : null}
     </div>
   );
 }

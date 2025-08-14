@@ -20,6 +20,7 @@ export default function Session() {
   const onnxSessionRef = useRef<ort.InferenceSession | null>(null);
   const mediaStreamRef = useRef<MediaStream | null>(null); // <-- added
   const color = useRef<string>("green");
+  const pausedRef = useRef<boolean>(false);
 
   const router = useRouter();
   const [showVideo, setShowVideo] = useState<boolean>(true);
@@ -114,6 +115,10 @@ export default function Session() {
       const drawingUtils = new DrawingUtils(ctx);
 
       const renderLoop = () => {
+        if (pausedRef.current)
+          // If it's paused then don't do any video processing
+          animationFrameRef.current = requestAnimationFrame(renderLoop);
+
         if (
           !videoRef.current ||
           !poseLandmarkerRef.current ||
@@ -170,7 +175,7 @@ export default function Session() {
     }
 
     if (showVideo) {
-      void init();
+      init();
     } else {
       stopAll();
       router.replace("/dashboard");
@@ -191,7 +196,14 @@ export default function Session() {
           <Button variant="destructive" onClick={() => setShowVideo(false)}>
             Stop Session
           </Button>
-          <Button variant="secondary">Pause Session</Button>
+          <Button
+            variant="secondary"
+            onClick={() => {
+              pausedRef.current = !pausedRef.current;
+            }}
+          >
+            Pause Session
+          </Button>
         </div>
         <div>
           <video ref={videoRef} style={{ display: "none" }} playsInline muted />

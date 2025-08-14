@@ -18,7 +18,7 @@ export default function Header({ avatarUrl }: { avatarUrl: string }) {
         <DropdownMenuTrigger asChild>
           <button
             aria-label="Open profile menu"
-            className="rounded-full focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+            className="rounded-full focus:outline-hidden focus:ring-2 focus:ring-ring focus:ring-offset-2"
           >
             <Avatar className="h-9 w-9 cursor-pointer">
               <AvatarImage src={avatarUrl} alt="Profile picture" />

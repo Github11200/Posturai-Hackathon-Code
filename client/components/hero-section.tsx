@@ -1,7 +1,7 @@
 export default function HeroSection() {
   return (
     <section
-      className="relative min-h-[100vh] flex items-center justify-center select-none overflow-visible pt-28 md:pt-32 border-t border-border/60 bg-card/5"
+      className="relative min-h-screen flex items-center justify-center select-none overflow-visible pt-28 md:pt-32 border-t border-border/60 bg-card/5"
       aria-labelledby="hero-heading"
     >
       <div className="relative z-10 w-full max-w-8xl mx-auto px-6 md:px-8">
@@ -13,7 +13,7 @@ export default function HeroSection() {
             Posture correction software.
           </p>
           <div className="w-full flex justify-center">
-            <div className="relative w-[clamp(240px,70vw,720px)] aspect-[16/9] rounded-[calc(var(--radius)*2)] border border-border/60 bg-card/40 shadow-inner overflow-hidden flex items-center justify-center text-muted-foreground text-sm">
+            <div className="relative w-[clamp(240px,70vw,720px)] aspect-video rounded-[calc(var(--radius)*2)] border border-border/60 bg-card/40 shadow-inner overflow-hidden flex items-center justify-center text-muted-foreground text-sm">
               Video Placeholder
             </div>
           </div>

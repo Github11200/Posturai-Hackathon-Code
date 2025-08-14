@@ -25,7 +25,7 @@ export default function PricingSection() {
         >
           <div
             role="listitem"
-            className="w-full max-w-md rounded-2xl border border-border/60 hover:border-border/80 hover:ring-1 hover:ring-border/100 focus-visible:border-border/80 focus-visible:ring-1 focus-visible:ring-border/40 bg-card/20 p-6 md:p-8 shadow-sm hover:shadow-md transition-colors duration-200"
+            className="w-full max-w-md rounded-2xl border border-border/60 hover:border-border/80 hover:ring-1 hover:ring-border focus-visible:border-border/80 focus-visible:ring-1 focus-visible:ring-border/40 bg-card/20 p-6 md:p-8 shadow-xs hover:shadow-md transition-colors duration-200"
           >
             <div className="flex items-center justify-between">
               <div>

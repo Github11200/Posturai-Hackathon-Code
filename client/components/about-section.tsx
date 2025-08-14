@@ -13,9 +13,9 @@ export default function AboutSection() {
         >
           <div
             role="listitem"
-            className="group relative rounded-2xl border border-border/60 hover:border-border/80 hover:ring-1 hover:ring-border/100 focus-visible:border-border/80 focus-visible:ring-1 focus-visible:ring-border/40 bg-card/40 p-6 shadow-sm hover:shadow-md transition-colors duration-200 lg:col-span-3 lg:row-span-3 overflow-hidden"
+            className="group relative rounded-2xl border border-border/60 hover:border-border/80 hover:ring-1 hover:ring-border focus-visible:border-border/80 focus-visible:ring-1 focus-visible:ring-border/40 bg-card/40 p-6 shadow-xs hover:shadow-md transition-colors duration-200 lg:col-span-3 lg:row-span-3 overflow-hidden"
           >
-            <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-emerald-500/10 via-green-400/5 to-teal-500/10 opacity-70" />
+            <div className="pointer-events-none absolute inset-0 bg-linear-to-br from-emerald-500/10 via-green-400/5 to-teal-500/10 opacity-70" />
             <div className="relative flex h-full flex-col">
               <div>
                 <div className="flex gap-2 items-center">
@@ -49,7 +49,7 @@ export default function AboutSection() {
 
           <div
             role="listitem"
-            className="rounded-2xl border border-border/60 hover:border-border/80 hover:ring-1 hover:ring-border/100 focus-visible:border-border/80 focus-visible:ring-1 focus-visible:ring-border/40 bg-card p-6 shadow-sm hover:shadow-md transition-colors duration-200 lg:col-span-2 lg:row-span-1"
+            className="rounded-2xl border border-border/60 hover:border-border/80 hover:ring-1 hover:ring-border focus-visible:border-border/80 focus-visible:ring-1 focus-visible:ring-border/40 bg-card p-6 shadow-xs hover:shadow-md transition-colors duration-200 lg:col-span-2 lg:row-span-1"
           >
             <h3 className="text-xl font-semibold mb-2 flex flex-row gap-2 items-center">
               <svg
@@ -75,7 +75,7 @@ export default function AboutSection() {
 
           <div
             role="listitem"
-            className="rounded-2xl border border-border/60 hover:border-border/80 hover:ring-1 hover:ring-border/100 focus-visible:border-border/80 focus-visible:ring-1 focus-visible:ring-border/40 bg-card p-6 shadow-sm hover:shadow-md transition-colors duration-200 lg:col-span-1 lg:row-span-1"
+            className="rounded-2xl border border-border/60 hover:border-border/80 hover:ring-1 hover:ring-border focus-visible:border-border/80 focus-visible:ring-1 focus-visible:ring-border/40 bg-card p-6 shadow-xs hover:shadow-md transition-colors duration-200 lg:col-span-1 lg:row-span-1"
           >
             <div className="flex items-center gap-2">
               <svg
@@ -97,7 +97,7 @@ export default function AboutSection() {
 
           <div
             role="listitem"
-            className="rounded-2xl border border-border/60 hover:border-border/80 hover:ring-1 hover:ring-border/100 focus-visible:border-border/80 focus-visible:ring-1 focus-visible:ring-border/40 bg-card p-6 shadow-sm hover:shadow-md transition-colors duration-200 lg:col-span-3 lg:row-span-2"
+            className="rounded-2xl border border-border/60 hover:border-border/80 hover:ring-1 hover:ring-border focus-visible:border-border/80 focus-visible:ring-1 focus-visible:ring-border/40 bg-card p-6 shadow-xs hover:shadow-md transition-colors duration-200 lg:col-span-3 lg:row-span-2"
           >
             <div className="flex h-full flex-col">
               <div>

@@ -38,7 +38,7 @@ const chartConfig = {
 
 export default function PostureChart() {
   return (
-    <div className="w-full border p-6 rounded-[var(--radius)]">
+    <div className="w-full border p-6 rounded-(--radius)">
       <ChartContainer config={chartConfig} className="w-full">
         <ComposedChart data={data} margin={{ left: 12, right: 12, top: 8 }}>
           <CartesianGrid vertical={false} strokeDasharray="3 3" />

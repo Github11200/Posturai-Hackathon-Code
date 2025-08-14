@@ -11,11 +11,11 @@ export function Navbar() {
   return (
     <header
       className={cn(
-        "fixed mx-auto top-4 left-4 right-4 lg:w-2/3 xl:max-w-[1400px] z-50 border rounded-[var(--radius)]"
+        "fixed mx-auto top-4 left-4 right-4 lg:w-2/3 xl:max-w-[1400px] z-50 border rounded-(--radius)"
       )}
     >
       <nav
-        className="relative backdrop-blur-md mx-auto max-w-7xl grid grid-cols-[1fr_1fr] lg:grid-cols-[1fr_auto_1fr] items-center px-2 py-2 md:px-4 md:py-4 rounded-[var(--radius)]"
+        className="relative backdrop-blur-md mx-auto max-w-7xl grid grid-cols-[1fr_1fr] lg:grid-cols-[1fr_auto_1fr] items-center px-2 py-2 md:px-4 md:py-4 rounded-(--radius)"
         aria-label="Main navigation"
       >
         <Link

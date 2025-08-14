@@ -38,8 +38,8 @@ const chartConfig = {
 
 export default function PostureChart() {
   return (
-    <div className="w-full border p-6 rounded-(--radius)">
-      <ChartContainer config={chartConfig} className="w-full">
+    <div className="flex justify-center items-center border p-6 rounded-(--radius) w-full">
+      <ChartContainer config={chartConfig} className="min-h-[200px] w-full">
         <ComposedChart data={data} margin={{ left: 12, right: 12, top: 8 }}>
           <CartesianGrid vertical={false} strokeDasharray="3 3" />
           <XAxis

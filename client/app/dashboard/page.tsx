@@ -1,9 +1,8 @@
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { redirect } from "next/navigation";
-import { Button } from "@/components/ui/button";
-import Header from "@/app/dashboard/header";
-import dynamic from "next/dynamic";
 import PostureChart from "./posture-chart";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { DashboardSidebar } from "./sidebar";
 
 export default async function Dashboard() {
   const { isAuthenticated, getAccessTokenRaw } = getKindeServerSession();
@@ -26,28 +25,27 @@ export default async function Dashboard() {
   //   // If they aren't paying then redirect them
   //   redirect("/api/auth/logout");
 
-  const avatarUrl = await fetch(`${baseUrl}/oauth2/v2/user_profile`, {
+  const data = await fetch(`${baseUrl}/oauth2/v2/user_profile`, {
     headers: {
       Authorization: `Bearer ${accessToken}`,
     },
-  })
-    .then((res) => {
-      return res.json();
-    })
-    .then((data) => {
-      return data.picture;
-    });
+  }).then((res) => {
+    return res.json();
+  });
 
   return (
-    <div className="space-y-6 flex h-screen items-center justify-center">
-      <Header avatarUrl={avatarUrl} />
-      <Button>Start Session</Button>
-      <section className="w-[50%]">
-        <h2 className="mb-2 text-sm font-medium text-muted-foreground">
-          Weekly good posture
-        </h2>
-        <PostureChart />
-      </section>
+    <div className="h-screen">
+      <SidebarProvider defaultOpen>
+        <DashboardSidebar avatarUrl={data.picture} />
+        <main className="w-full p-4">
+          <SidebarTrigger />
+          <div className="flex flex-col items-center w-full gap-6">
+            <h1 className="scroll-m-20 text-center text-4xl font-extrabold tracking-tight text-balance mx-auto">
+              Welcome {data.given_name}!
+            </h1>
+          </div>
+        </main>
+      </SidebarProvider>
     </div>
   );
 }

@@ -10,6 +10,7 @@ import {
 import * as ort from "onnxruntime-web";
 import { argMax, softmax } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 
 export default function Session() {
   const videoRef = useRef<HTMLVideoElement | null>(null); // hidden video element
@@ -20,7 +21,8 @@ export default function Session() {
   const mediaStreamRef = useRef<MediaStream | null>(null); // <-- added
   const color = useRef<string>("green");
 
-  const [showVideo, setShowVideo] = useState<boolean>(false);
+  const router = useRouter();
+  const [showVideo, setShowVideo] = useState<boolean>(true);
 
   useEffect(() => {
     let isMounted = true;
@@ -171,6 +173,7 @@ export default function Session() {
       void init();
     } else {
       stopAll();
+      router.replace("/dashboard");
     }
 
     return () => {
@@ -182,16 +185,15 @@ export default function Session() {
   }, [showVideo]);
 
   return (
-    <div>
-      <Button
-        onClick={() => {
-          setShowVideo((prev) => !prev);
-        }}
-      >
-        {showVideo ? "Hide Video" : "Show Video"}
-      </Button>
-      {showVideo ? (
-        <div style={{ width: "100%", height: "100vh", background: "black" }}>
+    <div className="w-full h-screen flex items-center justify-center">
+      <div className="flex flex-col items-center gap-4">
+        <div className="w-full grid grid-cols-2 gap-2">
+          <Button variant="destructive" onClick={() => setShowVideo(false)}>
+            Stop Session
+          </Button>
+          <Button variant="secondary">Pause Session</Button>
+        </div>
+        <div>
           <video ref={videoRef} style={{ display: "none" }} playsInline muted />
           <canvas
             ref={canvasRef}
@@ -200,7 +202,7 @@ export default function Session() {
             style={{ display: "block", margin: "0 auto" }}
           />
         </div>
-      ) : null}
+      </div>
     </div>
   );
 }

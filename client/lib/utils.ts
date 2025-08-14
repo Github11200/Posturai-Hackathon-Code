@@ -7,6 +7,7 @@ export function cn(...inputs: ClassValue[]) {
 
 export function softmax(logits: Float32Array): Float32Array {
   let exponentsSum = 0;
+  // @ts-ignore
   for (let logit of logits)
     exponentsSum += Math.exp(logit);
 

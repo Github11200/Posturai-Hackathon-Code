@@ -1,59 +1,133 @@
+"use client";
+
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { useState } from "react";
+import { LoginLink, RegisterLink } from "@kinde-oss/kinde-auth-nextjs";
 
 export function Navbar() {
+  const [open, setOpen] = useState(false);
   return (
     <header
       className={cn(
-        "fixed top-4 left-1/2 -translate-x-1/2 w-[96%] md:w-[96%] lg:w-[96%] xl:max-w-[1400px] z-50 supports-[backdrop-filter]:bg-background/55 border border-border/50 rounded-[calc(var(--radius)*1.5)]"
+        "fixed mx-auto top-4 left-4 right-4 lg:w-2/3 xl:max-w-[1400px] z-50 border rounded-[var(--radius)]"
       )}
     >
       <nav
-        className="mx-auto h-20 max-w-7xl grid grid-cols-[1fr_auto_1fr] items-center px-6 md:px-10"
+        className="relative backdrop-blur-md mx-auto max-w-7xl grid grid-cols-[1fr_1fr] lg:grid-cols-[1fr_auto_1fr] items-center px-2 py-2 md:px-4 md:py-4 rounded-[var(--radius)]"
         aria-label="Main navigation"
       >
         <Link
           href="#"
-          className="font-semibold tracking-tight text-xl md:text-2xl text-foreground hover:text-foreground/80 transition-colors"
+          className="ml-2 font-semibold tracking-tight text-xl md:text-2xl text-foreground hover:text-foreground/80 transition-colors"
         >
           Posturai
         </Link>
-        <ul className="flex items-center gap-12 text-base md:text-lg font-medium">
+        <ul className="hidden lg:flex items-center gap-12 text-base md:text-lg font-medium">
           <li>
-            <Button
-              asChild
-              variant="ghost"
-              size="lg"
-              className="text-muted-foreground text-lg hover:text-foreground px-4"
+            <Link
+              href="#about"
+              className="text-muted-foreground text-lg px-4 transition-colors hover:text-foreground/90"
             >
-              <Link href="#about">About</Link>
-            </Button>
+              About
+            </Link>
           </li>
           <li>
-            <Button
-              asChild
-              variant="ghost"
-              size="lg"
-              className="text-muted-foreground text-lg hover:text-foreground px-4"
+            <Link
+              href="#features"
+              className="text-muted-foreground text-lg px-4 transition-colors hover:text-foreground/90"
             >
-              <Link href="#features">Features</Link>
-            </Button>
+              Features
+            </Link>
           </li>
           <li>
-            <Button
-              asChild
-              variant="ghost"
-              size="lg"
-              className="text-muted-foreground text-lg hover:text-foreground px-4"
+            <Link
+              href="#pricing"
+              className="text-muted-foreground text-lg px-4 transition-colors hover:text-foreground/90"
             >
-              <Link href="#pricing">Pricing</Link>
-            </Button>
+              Pricing
+            </Link>
+          </li>
+          <li>
+            <Link
+              href="#contact"
+              className="text-muted-foreground text-lg px-4 transition-colors hover:text-foreground/90"
+            >
+              Contact
+            </Link>
           </li>
         </ul>
         <div className="justify-self-end flex items-center gap-4">
-          <Button size="lg">Sign Up</Button>
+          {/* Mobile menu toggle */}
+          <button
+            type="button"
+            className="lg:hidden text-2xl leading-none px-3 py-3 rounded hover:bg-muted/50 transition-colors"
+            aria-label="Open menu"
+            aria-expanded={open}
+            aria-controls="mobile-menu"
+            onClick={() => setOpen((v) => !v)}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              className="size-6"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+              />
+            </svg>
+          </button>
+          <Button size="lg">
+            <RegisterLink>Get started</RegisterLink>
+          </Button>
         </div>
+        {/* Mobile dropdown */}
+        {open && (
+          <div
+            id="mobile-menu"
+            role="menu"
+            className="lg:hidden absolute top-full right-0 mt-2 w-56 rounded-md border border-border bg-background shadow-lg p-2"
+          >
+            <Link
+              href="#about"
+              className="block w-full rounded px-3 py-2 text-base text-muted-foreground hover:text-foreground/90 hover:bg-muted/50 transition-colors"
+              onClick={() => setOpen(false)}
+              role="menuitem"
+            >
+              About
+            </Link>
+            <Link
+              href="#features"
+              className="block w-full rounded px-3 py-2 text-base text-muted-foreground hover:text-foreground/90 hover:bg-muted/50 transition-colors"
+              onClick={() => setOpen(false)}
+              role="menuitem"
+            >
+              Features
+            </Link>
+            <Link
+              href="#pricing"
+              className="block w-full rounded px-3 py-2 text-base text-muted-foreground hover:text-foreground/90 hover:bg-muted/50 transition-colors"
+              onClick={() => setOpen(false)}
+              role="menuitem"
+            >
+              Pricing
+            </Link>
+            <Link
+              href="#contact"
+              className="block w-full rounded px-3 py-2 text-base text-muted-foreground hover:text-foreground/90 hover:bg-muted/50 transition-colors"
+              onClick={() => setOpen(false)}
+              role="menuitem"
+            >
+              Contact
+            </Link>
+          </div>
+        )}
       </nav>
     </header>
   );

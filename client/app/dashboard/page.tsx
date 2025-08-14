@@ -3,9 +3,7 @@ import { redirect } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import Header from "@/app/dashboard/header";
 import dynamic from "next/dynamic";
-
-// Use dynamic import to avoid SSR issues with Recharts (client-only)
-const PostureChart = dynamic(() => import("./posture-chart"), { ssr: false });
+import PostureChart from "./posture-chart";
 
 export default async function Dashboard() {
   const { isAuthenticated, getAccessTokenRaw } = getKindeServerSession();

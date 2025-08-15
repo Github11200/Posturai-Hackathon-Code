@@ -25,23 +25,23 @@ export default async function Dashboard() {
   //   // If they aren't paying then redirect them
   //   redirect("/api/auth/logout");
 
-  const data = await fetch(`${baseUrl}/oauth2/v2/user_profile`, {
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
-  }).then((res) => {
-    return res.json();
-  });
+  // const data = await fetch(`${baseUrl}/oauth2/v2/user_profile`, {
+  //   headers: {
+  //     Authorization: `Bearer ${accessToken}`,
+  //   },
+  // }).then((res) => {
+  //   return res.json();
+  // });
 
   return (
     <div className="h-screen">
       <SidebarProvider defaultOpen>
-        <DashboardSidebar avatarUrl={data.picture} />
+        <DashboardSidebar avatarUrl={""} />
         <main className="w-full p-4">
           <SidebarTrigger />
           <div className="flex flex-col items-center w-full gap-6">
             <h1 className="scroll-m-20 text-center text-4xl font-extrabold tracking-tight text-balance mx-auto">
-              Welcome {data.given_name}!
+              Welcome name!
             </h1>
             <div className="container mx-auto w-full max-w-6xl">
               <StatsOverview />

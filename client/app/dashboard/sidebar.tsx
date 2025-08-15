@@ -26,38 +26,45 @@ import { useEffect, useRef } from "react";
 
 function Profile({ avatarUrl }: { avatarUrl: string }) {
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger
-        asChild
-        className="rounded-full focus:outline-hidden focus:ring-2 focus:ring-ring focus:ring-offset-2 mb-2 ml-2 flex gap-4"
-      >
-        <div
-          aria-label="Open profile menu"
+    <div className="flex gap-4">
+      <DropdownMenu>
+        <DropdownMenuTrigger
+          asChild
           className="rounded-full focus:outline-hidden focus:ring-2 focus:ring-ring focus:ring-offset-2 mb-2 ml-2 flex gap-4"
         >
-          <Avatar className="h-9 w-9 cursor-pointer hover:ring-2 hover:ring-[var(--secondary)]">
-            <AvatarImage src={avatarUrl} />
-            <AvatarFallback>P</AvatarFallback>
-          </Avatar>
-          <Button variant="destructive" className="flex-1 hover:cursor-pointer">
-            <LogoutLink>Log out</LogoutLink>
-          </Button>
-        </div>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="start" sideOffset={8}>
-        <DropdownMenuItem>
-          <PortalLink>Manage billing</PortalLink>
-        </DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem>
-          <LogoutLink>Settings</LogoutLink>
-        </DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem>
-          <LogoutLink>Sign out</LogoutLink>
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+          <div
+            aria-label="Open profile menu"
+            className="rounded-full focus:outline-hidden focus:ring-2 focus:ring-ring focus:ring-offset-2 mb-2 ml-2 flex gap-4"
+          >
+            <Avatar className="h-9 w-9 cursor-pointer hover:ring-2 hover:ring-[var(--secondary)]">
+              <AvatarImage src={avatarUrl} />
+              <AvatarFallback>P</AvatarFallback>
+            </Avatar>
+          </div>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="start" sideOffset={8}>
+          <DropdownMenuItem>
+            <PortalLink>Manage billing</PortalLink>
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem>
+            <LogoutLink>Settings</LogoutLink>
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem>
+            <LogoutLink>Sign out</LogoutLink>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+      <LogoutLink className="w-full">
+        <Button
+          variant="destructive"
+          className="flex-1 hover:cursor-pointer w-full"
+        >
+          Log out
+        </Button>
+      </LogoutLink>
+    </div>
   );
 }
 

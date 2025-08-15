@@ -1,3 +1,8 @@
+"use client";
+
+import { RegisterLink } from "@kinde-oss/kinde-auth-nextjs";
+import { Button } from "./ui/button";
+
 export default function PricingSection() {
   return (
     <section
@@ -116,16 +121,14 @@ export default function PricingSection() {
                     d="M4.5 12.75l6 6 9-13.5"
                   />
                 </svg>
-                Daily & weekly insights
+                In-depth statistics
               </li>
             </ul>
 
             <div className="mt-8">
-              <a href="#" className="block">
-                <button className="w-full inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium h-11 px-6 bg-primary text-primary-foreground hover:bg-primary/90 transition-colors">
-                  Get started
-                </button>
-              </a>
+              <RegisterLink>
+                <Button className="w-full">Get started</Button>
+              </RegisterLink>
             </div>
           </div>
         </div>

@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { LoginLink, RegisterLink } from "@kinde-oss/kinde-auth-nextjs";
+import { PortalLink } from "@kinde-oss/kinde-auth-nextjs/components";
 
 export function Navbar() {
   const [open, setOpen] = useState(false);
@@ -83,9 +84,9 @@ export function Navbar() {
               />
             </svg>
           </button>
-          <Button size="lg">
-            <RegisterLink>Get started</RegisterLink>
-          </Button>
+          <LoginLink>
+            <Button size="lg">Get started</Button>
+          </LoginLink>
         </div>
         {/* Mobile dropdown */}
         {open && (

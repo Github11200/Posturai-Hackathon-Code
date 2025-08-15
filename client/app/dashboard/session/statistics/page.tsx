@@ -131,7 +131,7 @@ export default function SessionStatisticsPage() {
   }));
 
   return (
-    <div className="container mx-auto grid gap-6 p-6">
+    <div className="mx-auto grid gap-6 p-6 w-full max-w-full">
       <div className="grid gap-2">
         <h1 className="text-2xl font-semibold tracking-tight">
           Session statistics
@@ -143,8 +143,8 @@ export default function SessionStatisticsPage() {
       <Link href={"/dashboard"}>
         <Button className="w-full">Continue</Button>
       </Link>
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-4">
-        <Card>
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-4 min-w-0">
+        <Card className="min-w-0">
           <CardHeader>
             <CardTitle className="text-base">Total duration</CardTitle>
             <CardDescription>Total time of the session</CardDescription>
@@ -156,7 +156,7 @@ export default function SessionStatisticsPage() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="min-w-0">
           <CardHeader>
             <CardTitle className="text-base">Time sitting</CardTitle>
             <CardDescription>Active sitting time</CardDescription>
@@ -168,7 +168,7 @@ export default function SessionStatisticsPage() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="min-w-0">
           <CardHeader>
             <CardTitle className="text-base">Break time</CardTitle>
             <CardDescription>Sum of breaks</CardDescription>
@@ -180,7 +180,7 @@ export default function SessionStatisticsPage() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="min-w-0">
           <CardHeader>
             <CardTitle className="text-base">Breaks</CardTitle>
             <CardDescription>Number of breaks taken</CardDescription>
@@ -191,7 +191,7 @@ export default function SessionStatisticsPage() {
         </Card>
       </div>
 
-      <Card className="col-span-1">
+      <Card className="col-span-1 min-w-0">
         <CardHeader>
           <CardTitle>Time sitting vs breaks</CardTitle>
           <CardDescription>Minutes in latest session</CardDescription>
@@ -208,7 +208,7 @@ export default function SessionStatisticsPage() {
                 color: "#f97316",
               },
             }}
-            className="h-72 w-full"
+            className="h-72 w-full max-w-full"
           >
             <BarChart data={mainChartData}>
               <CartesianGrid vertical={false} strokeDasharray="3 3" />
@@ -236,8 +236,8 @@ export default function SessionStatisticsPage() {
         </CardContent>
       </Card>
 
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <Card>
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 min-w-0">
+        <Card className="min-w-0">
           <CardHeader>
             <CardTitle>Sitting intervals</CardTitle>
             <CardDescription>
@@ -251,7 +251,7 @@ export default function SessionStatisticsPage() {
             ) : (
               <ChartContainer
                 config={{ minutes: { label: "Minutes", color: "#3b82f6" } }}
-                className="h-64 w-full"
+                className="h-64 w-full max-w-full"
               >
                 <BarChart data={sittingIntervals}>
                   <CartesianGrid vertical={false} strokeDasharray="3 3" />
@@ -274,7 +274,7 @@ export default function SessionStatisticsPage() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="min-w-0">
           <CardHeader>
             <CardTitle>Break intervals</CardTitle>
             <CardDescription>
@@ -288,7 +288,7 @@ export default function SessionStatisticsPage() {
             ) : (
               <ChartContainer
                 config={{ minutes: { label: "Minutes", color: "#f97316" } }}
-                className="h-64 w-full"
+                className="h-64 w-full max-w-full"
               >
                 <BarChart data={breakIntervals}>
                   <CartesianGrid vertical={false} strokeDasharray="3 3" />
@@ -312,13 +312,13 @@ export default function SessionStatisticsPage() {
         </Card>
       </div>
 
-      <Card>
+      <Card className="min-w-0">
         <CardHeader>
           <CardTitle>Details</CardTitle>
           <CardDescription>All fields for the latest session</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 min-w-0">
             <div>
               <div className="text-sm text-muted-foreground">Date</div>
               <div className="font-medium">{dateStr}</div>
@@ -355,7 +355,7 @@ export default function SessionStatisticsPage() {
 
           <Separator className="my-4" />
 
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 min-w-0">
             <div>
               <div className="text-sm text-muted-foreground">
                 Sitting durations

@@ -292,10 +292,10 @@ export default function StatsOverview() {
   }
 
   return (
-    <div className="grid gap-6">
+    <div className="grid gap-6 min-w-0">
       {/* Summary cards */}
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-4">
-        <Card>
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-4 min-w-0">
+        <Card className="min-w-0">
           <CardHeader>
             <CardTitle className="text-base">Total sessions</CardTitle>
             <CardDescription>All recorded sessions</CardDescription>
@@ -304,7 +304,7 @@ export default function StatsOverview() {
             <div className="text-3xl font-bold">{stats.totalSessions}</div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="min-w-0">
           <CardHeader>
             <CardTitle className="text-base">Total duration</CardTitle>
             <CardDescription>Sum across sessions</CardDescription>
@@ -315,7 +315,7 @@ export default function StatsOverview() {
             </div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="min-w-0">
           <CardHeader>
             <CardTitle className="text-base">Total sitting</CardTitle>
             <CardDescription>Active sitting time</CardDescription>
@@ -326,7 +326,7 @@ export default function StatsOverview() {
             </div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="min-w-0">
           <CardHeader>
             <CardTitle className="text-base">Total break time</CardTitle>
             <CardDescription>Sum of breaks</CardDescription>
@@ -339,8 +339,8 @@ export default function StatsOverview() {
         </Card>
       </div>
 
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-4">
-        <Card>
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-4 min-w-0">
+        <Card className="min-w-0">
           <CardHeader>
             <CardTitle className="text-base">Avg duration</CardTitle>
             <CardDescription>Per session</CardDescription>
@@ -351,7 +351,7 @@ export default function StatsOverview() {
             </div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="min-w-0">
           <CardHeader>
             <CardTitle className="text-base">Avg sitting</CardTitle>
             <CardDescription>Per session</CardDescription>
@@ -362,7 +362,7 @@ export default function StatsOverview() {
             </div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="min-w-0">
           <CardHeader>
             <CardTitle className="text-base">Avg break time</CardTitle>
             <CardDescription>Per session</CardDescription>
@@ -373,7 +373,7 @@ export default function StatsOverview() {
             </div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="min-w-0">
           <CardHeader>
             <CardTitle className="text-base">Avg # breaks</CardTitle>
             <CardDescription>Per session</CardDescription>
@@ -387,7 +387,7 @@ export default function StatsOverview() {
       </div>
 
       {/* Weekly sitting vs breaks */}
-      <Card>
+      <Card className="min-w-0">
         <CardHeader>
           <CardTitle>Weekly sitting vs breaks</CardTitle>
           <CardDescription>Totals grouped by week (Mon start)</CardDescription>
@@ -398,7 +398,7 @@ export default function StatsOverview() {
               sitting: { label: "Sitting (min)", color: "#3b82f6" },
               breaks: { label: "Breaks (min)", color: "#f97316" },
             }}
-            className="h-72 w-full"
+            className="h-72 w-full max-w-full"
           >
             <BarChart
               data={stats.weeklyData.map((w) => ({
@@ -433,7 +433,7 @@ export default function StatsOverview() {
       </Card>
 
       {/* Session duration timeline */}
-      <Card>
+      <Card className="min-w-0">
         <CardHeader>
           <CardTitle>Session timeline</CardTitle>
           <CardDescription>
@@ -447,7 +447,7 @@ export default function StatsOverview() {
               sitting: { label: "Sitting (min)", color: "#3b82f6" },
               breaks: { label: "Breaks (min)", color: "#f97316" },
             }}
-            className="h-72 w-full"
+            className="h-72 w-full max-w-full"
           >
             <LineChart data={stats.perSessionTimeline}>
               <CartesianGrid vertical={false} strokeDasharray="3 3" />
@@ -488,9 +488,9 @@ export default function StatsOverview() {
         </CardContent>
       </Card>
 
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 min-w-0">
         {/* Breaks per session */}
-        <Card>
+        <Card className="min-w-0">
           <CardHeader>
             <CardTitle>Breaks per session</CardTitle>
             <CardDescription>How many breaks you usually take</CardDescription>
@@ -498,7 +498,7 @@ export default function StatsOverview() {
           <CardContent>
             <ChartContainer
               config={{ breaks: { label: "# Breaks", color: "#8b5cf6" } }}
-              className="h-64 w-full"
+              className="h-64 w-full max-w-full"
             >
               <BarChart data={stats.breaksPerSession}>
                 <CartesianGrid vertical={false} strokeDasharray="3 3" />
@@ -526,7 +526,7 @@ export default function StatsOverview() {
         </Card>
 
         {/* Interval distribution */}
-        <Card>
+        <Card className="min-w-0">
           <CardHeader>
             <CardTitle>Interval lengths</CardTitle>
             <CardDescription>
@@ -540,7 +540,7 @@ export default function StatsOverview() {
                 sitting: { label: "Sitting intervals", color: "#3b82f6" },
                 breaks: { label: "Break intervals", color: "#f97316" },
               }}
-              className="h-64 w-full"
+              className="h-64 w-full max-w-full"
             >
               <BarChart
                 data={stats.sittingBinsData.map((s, i) => ({
@@ -581,7 +581,7 @@ export default function StatsOverview() {
       </div>
 
       {/* All sessions details */}
-      <Card>
+      <Card className="min-w-0">
         <CardHeader>
           <CardTitle>All sessions</CardTitle>
         </CardHeader>

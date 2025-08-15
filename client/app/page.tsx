@@ -9,7 +9,7 @@ import ContactSection from "@/components/contact-section";
 
 export default function Home() {
   return (
-    <main className="w-full overflow-x-hidden">
+    <main className="w-full h-screen overflow-x-hidden overflow-y-auto">
       <Navbar />
       <div className="absolute inset-0 -z-10">
         <div className="absolute top-1/4 left-1/3 w-96 h-96 bg-linear-to-br from-green-400/20 via-emerald-400/15 to-teal-400/20 rounded-full blur-3xl animate-float-slow"></div>

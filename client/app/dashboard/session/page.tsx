@@ -38,6 +38,7 @@ interface Duration {
 export default function Session() {
   const videoRef = useRef<HTMLVideoElement | null>(null); // hidden video element
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
   const poseLandmarkerRef = useRef<PoseLandmarker | null>(null);
   const animationFrameRef = useRef<number | null>(null);
   const onnxSessionRef = useRef<ort.InferenceSession | null>(null);
@@ -57,6 +58,32 @@ export default function Session() {
 
   const BREAK_REMINDER_TIME = 2000; // In milleseconds
   const TIME_BETWEEN_TOASTS = 3000; // In milleseconds
+
+  // Dynamically size the canvas to its container and the video aspect ratio
+  const syncCanvasSize = () => {
+    const canvas = canvasRef.current;
+    const container = containerRef.current;
+    const video = videoRef.current;
+    if (!canvas || !container) return;
+
+    const containerWidth = container.clientWidth;
+    // Default to 4:3 until we know the video dimensions
+    let aspect = 4 / 3;
+    if (video && video.videoWidth && video.videoHeight) {
+      aspect = video.videoWidth / video.videoHeight;
+    }
+
+    const cssWidth = Math.max(1, containerWidth); // prevent 0
+    const cssHeight = Math.max(1, Math.round(cssWidth / aspect));
+
+    // CSS size (how big it appears)
+    canvas.style.width = `${cssWidth}px`;
+    canvas.style.height = `${cssHeight}px`;
+
+    // Internal drawing buffer (match CSS px for simplicity and to avoid double-scaling in DrawingUtils)
+    canvas.width = cssWidth;
+    canvas.height = cssHeight;
+  };
 
   async function runModel(results: PoseResult) {
     if (!results?.landmarks?.length) return;
@@ -216,11 +243,17 @@ export default function Session() {
         mediaStreamRef.current = stream;
         if (videoRef.current) {
           videoRef.current.srcObject = stream;
+          // Size canvas once we know the video dimensions
+          videoRef.current.onloadedmetadata = () => {
+            syncCanvasSize();
+          };
           try {
             await videoRef.current.play();
           } catch {
             /* autoplay may be blocked */
           }
+          // Also size right away using fallback aspect
+          syncCanvasSize();
           detectPose();
         }
       } catch (err) {
@@ -320,6 +353,13 @@ export default function Session() {
       }
     };
   }, [showVideo]);
+
+  // Recalculate canvas size on window resize/orientation changes
+  useEffect(() => {
+    const handler = () => syncCanvasSize();
+    window.addEventListener("resize", handler);
+    return () => window.removeEventListener("resize", handler);
+  }, []);
 
   function pauseAll() {
     pausedRef.current = true;
@@ -425,11 +465,15 @@ export default function Session() {
           mediaStreamRef.current = stream;
           if (videoRef.current) {
             videoRef.current.srcObject = stream;
+            videoRef.current.onloadedmetadata = () => {
+              syncCanvasSize();
+            };
             try {
               await videoRef.current.play();
             } catch {
               /* autoplay may be blocked */
             }
+            syncCanvasSize();
           }
         } catch (err) {
           console.error("Failed to resume camera:", err);
@@ -441,6 +485,7 @@ export default function Session() {
         } catch {
           /* ignore */
         }
+        syncCanvasSize();
       }
 
       detectPose();
@@ -452,7 +497,7 @@ export default function Session() {
   return (
     <div className="w-full h-screen flex items-center justify-center relative">
       <div className="flex flex-col items-center gap-4">
-        <div className="w-full grid grid-cols-2 gap-2">
+        <div className="w-full max-w-[640px] grid grid-cols-2 gap-2">
           <Button variant="destructive" onClick={handleStop}>
             Stop Session
           </Button>
@@ -527,13 +572,19 @@ export default function Session() {
             </AlertDialog>
           )}
         </div>
-        <div>
+        <div ref={containerRef} className="">
           <video ref={videoRef} style={{ display: "none" }} playsInline muted />
           <canvas
             ref={canvasRef}
-            width={640}
-            height={480}
-            style={{ display: "block", margin: "0 auto" }}
+            width={(() => {
+              if (window.innerWidth < 700) return 380;
+              return 640;
+            })()}
+            height={(() => {
+              console.log(window.innerWidth);
+              if (window.innerWidth < 700) return 220;
+              return 480;
+            })()}
           />
         </div>
       </div>

@@ -21,6 +21,8 @@ import { LogoutLink } from "@kinde-oss/kinde-auth-nextjs";
 import { PortalLink } from "@kinde-oss/kinde-auth-nextjs/components";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { db } from "@/lib/db";
+import { useEffect, useRef } from "react";
 
 function Profile({ avatarUrl }: { avatarUrl: string }) {
   return (
@@ -48,6 +50,10 @@ function Profile({ avatarUrl }: { avatarUrl: string }) {
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem>
+          <LogoutLink>Settings</LogoutLink>
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem>
           <LogoutLink>Sign out</LogoutLink>
         </DropdownMenuItem>
       </DropdownMenuContent>
@@ -69,6 +75,7 @@ interface MenuItem {
 
 const menuItems: MenuItem[] = [
   { title: "New Session", url: "/dashboard/session", variant: "default" },
+  { title: "How Posturai works", url: "#", variant: "secondary" },
   { title: "Why is posture important?", url: "#", variant: "secondary" },
 ];
 

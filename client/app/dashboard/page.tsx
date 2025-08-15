@@ -1,8 +1,8 @@
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { redirect } from "next/navigation";
-import PostureChart from "./posture-chart";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { DashboardSidebar } from "./sidebar";
+import StatsOverview from "./stats-overview";
 
 export default async function Dashboard() {
   const { isAuthenticated, getAccessTokenRaw } = getKindeServerSession();
@@ -43,6 +43,9 @@ export default async function Dashboard() {
             <h1 className="scroll-m-20 text-center text-4xl font-extrabold tracking-tight text-balance mx-auto">
               Welcome {data.given_name}!
             </h1>
+            <div className="container mx-auto w-full max-w-6xl">
+              <StatsOverview />
+            </div>
           </div>
         </main>
       </SidebarProvider>

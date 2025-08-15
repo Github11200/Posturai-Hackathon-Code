@@ -1,8 +1,5 @@
 // TODO: Update the buttons to have more of a Supabase or Stripe type of look
-// TODO: Create the session page with buttons to stop and/or pause the recording
-// TODO: When the user is not detected turn off the camera to save resources and count it as a break
-// TODO: When the session ends send all the stats to Supabase
-// TODO: Display all these stats on the dashboard
+// TODO: Fix up the auth/billing
 
 import { Navbar } from "../components/navbar";
 import HeroSection from "@/components/hero-section";

@@ -576,15 +576,9 @@ export default function Session() {
           <video ref={videoRef} style={{ display: "none" }} playsInline muted />
           <canvas
             ref={canvasRef}
-            width={(() => {
-              if (window.innerWidth < 700) return 380;
-              return 640;
-            })()}
-            height={(() => {
-              console.log(window.innerWidth);
-              if (window.innerWidth < 700) return 220;
-              return 480;
-            })()}
+            // TODO: Make it dynamic
+            width={640}
+            height={480}
           />
         </div>
       </div>

@@ -23,16 +23,20 @@ export default async function middleware(request: NextRequest) {
 
   // If they aren't paying then redirect them back to the homepage
   if (plans.length == 0 || plans[0].subscribed_on === null)
-    return NextResponse.redirect(new URL('/', request.url))
+    return NextResponse.redirect(new URL('/payment', request.url))
 
   return withAuth(request);
 }
 
 export const config = {
   matcher: [
-    // '/((?!_next|$|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
     '/dashboard',
     '/dashboard/session',
-    '/dashboard/session/statistics'
+    '/dashboard/session/statistics',
+    '/dashboard/session/[id]',
+    '/dashboard/sessions',
+    '/dashboard/settings',
+    '/dashboard/posture',
+    '/dashboard/posturai'
   ],
 };

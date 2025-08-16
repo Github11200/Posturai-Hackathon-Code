@@ -1,6 +1,11 @@
 import { type ClassValue, clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
 
+// NOTE: Replace these with your real contact details.
+export const SUPPORT_EMAIL = "jinayunity22@gmail.com"; // TODO: Change the email possibly
+export const LINKEDIN_URL = "https://www.linkedin.com/in/jinay-patel-6369002b4/"; // TODO: set real LinkedIn
+export const DISCORD_URL = "https://discord.gg/GY7cNrpd";
+
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }

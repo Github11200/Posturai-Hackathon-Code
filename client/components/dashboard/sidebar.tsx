@@ -32,6 +32,8 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Linkedin, Mail, X } from "lucide-react";
+import Image from "next/image";
+import { SUPPORT_EMAIL, LINKEDIN_URL, DISCORD_URL } from "@/lib/utils";
 
 function Profile({ avatarUrl }: { avatarUrl: string }) {
   const [open, setOpen] = useState(false);
@@ -58,21 +60,37 @@ function Profile({ avatarUrl }: { avatarUrl: string }) {
           </AlertDialogHeader>
           <AlertDialogFooter className="w-full flex">
             {" "}
-            <Button asChild variant={"outline"} className="w-full flex-1">
-              <a href={"jinayunity22@gmail.com"} aria-label="Email us">
-                <Mail className="mr-2 size-4" /> Email
-              </a>
+            <Button asChild size="lg" className="flex-1">
+              <Link href={SUPPORT_EMAIL} aria-label="Email us">
+                <Mail className="mr-2 size-4" /> Email us
+              </Link>
             </Button>
-            <Button asChild variant="outline" className="w-full flex-1">
-              <a
-                // TODO: add url
-                href={""}
+            <Button asChild variant="outline" size="lg" className="flex-1">
+              <Link
+                href={LINKEDIN_URL}
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Find us on LinkedIn"
               >
                 <Linkedin className="mr-2 size-4" /> LinkedIn
-              </a>
+              </Link>
+            </Button>
+            <Button asChild variant="outline" size="lg" className="flex-1">
+              <Link
+                href={DISCORD_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Find us on LinkedIn"
+              >
+                <Image
+                  src={"/landing/discord.svg"}
+                  width={16}
+                  height={16}
+                  alt="Discord logo"
+                  className="mr-2"
+                />{" "}
+                Discord
+              </Link>
             </Button>
           </AlertDialogFooter>
         </AlertDialogContent>

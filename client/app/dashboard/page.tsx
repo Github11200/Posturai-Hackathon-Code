@@ -25,7 +25,7 @@ export default async function Dashboard() {
       <h1 className="scroll-m-20 text-center text-4xl font-extrabold tracking-tight text-balance mx-auto mb-6">
         Welcome {data.given_name}!
       </h1>
-      <div className="container mx-auto w-full max-w-6xl min-w-0">
+      <div className="container mx-auto w-full max-w-6xl min-w-0 pb-8">
         <StatsOverview />
       </div>
     </div>

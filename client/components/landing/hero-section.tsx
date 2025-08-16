@@ -1,7 +1,7 @@
 export default function HeroSection() {
   return (
     <section
-      className="relative min-h-screen flex items-center justify-center select-none overflow-visible pt-28 md:pt-32 border-t border-border/60 bg-card/5"
+      className="relative min-h-screen flex items-center justify-center overflow-visible pt-28 md:pt-32 border-t border-border/60 bg-card/5"
       aria-labelledby="hero-heading"
     >
       <div className="relative z-10 w-full max-w-8xl mx-auto px-6 md:px-8">

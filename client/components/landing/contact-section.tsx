@@ -1,11 +1,11 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { SUPPORT_EMAIL, LINKEDIN_URL, DISCORD_URL } from "@/lib/utils";
 import { Mail, Linkedin } from "lucide-react";
-
-// NOTE: Replace these with your real contact details.
-const SUPPORT_EMAIL = "jinayunity22@gmail.com"; // TODO: Change the email possibly
-const LINKEDIN_URL = "https://www.linkedin.com/company/posturai"; // TODO: set real LinkedIn
+import Image from "next/image";
+import Link from "next/link";
+import ContactLinks from "../contact-links";
 
 export function ContactSection() {
   const mailto = `mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent(
@@ -32,27 +32,12 @@ export function ContactSection() {
             Contact us
           </h2>
           <p className="text-sm md:text-base text-muted-foreground">
-            We’re happy to help — reach us by email or on LinkedIn.
+            We’re happy to help — reach us by email, Linkedin, or join our
+            Discord!
           </p>
         </div>
 
-        <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
-          <Button asChild size="lg" className="min-w-40">
-            <a href={mailto} aria-label="Email us">
-              <Mail className="mr-2 size-4" /> Email us
-            </a>
-          </Button>
-          <Button asChild variant="outline" size="lg" className="min-w-40">
-            <a
-              href={LINKEDIN_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Find us on LinkedIn"
-            >
-              <Linkedin className="mr-2 size-4" /> LinkedIn
-            </a>
-          </Button>
-        </div>
+        <ContactLinks />
       </div>
     </section>
   );

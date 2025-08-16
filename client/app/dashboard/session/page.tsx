@@ -10,6 +10,7 @@ import {
 import * as ort from "onnxruntime-web";
 import { argMax, softmax } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
 import { useRouter } from "next/navigation";
 import {
   AlertDialog,
@@ -24,7 +25,8 @@ import {
 } from "@/components/ui/alert-dialog";
 import Image from "next/image";
 import { toast } from "sonner";
-import { db, SessionInterface } from "@/lib/db";
+import { db, SessionInterface, SettingsInterface } from "@/lib/db";
+import { Label } from "@/components/ui/label";
 
 interface PoseResult {
   landmarks?: NormalizedLandmark[][];
@@ -47,6 +49,13 @@ export default function Session() {
   const pausedRef = useRef<boolean>(false);
   // Capture an exact timestamp when the user clicks Stop to avoid UI/effect latency skewing durations
   const stopAtRef = useRef<number | null>(null);
+  const currentSettings = useRef<null | SettingsInterface>(null);
+
+  // Audio alert for bad posture
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const lastBadRef = useRef<boolean>(false);
+  const warnedUnlockRef = useRef<boolean>(false);
+  const [soundEnabled, setSoundEnabled] = useState<boolean>(false);
 
   const breakDurations = useRef<Duration[]>([]);
   const sittingDurations = useRef<Duration[]>([]);
@@ -55,9 +64,15 @@ export default function Session() {
   const router = useRouter();
   const [showVideo, setShowVideo] = useState<boolean>(true);
   const [paused, setPaused] = useState<boolean>(false);
+  // Controls whether the camera feed is drawn to the canvas background
+  const [showFeed, setShowFeed] = useState<boolean>(false);
+  const showFeedRef = useRef<boolean>(false);
+  useEffect(() => {
+    showFeedRef.current = showFeed;
+  }, [showFeed]);
 
-  const BREAK_REMINDER_TIME = 2000; // In milleseconds
-  const TIME_BETWEEN_TOASTS = 3000; // In milleseconds
+  let BREAK_REMINDER_TIME = 1800000; // In milleseconds
+  let TIME_BETWEEN_TOASTS = 120000; // In milleseconds
 
   // Dynamically size the canvas to its container and the video aspect ratio
   const syncCanvasSize = () => {
@@ -106,6 +121,44 @@ export default function Session() {
       // @ts-ignore
       const cls = Math.round(argMax(softmax(out.cpuData as Float32Array)));
       color.current = cls === 1 ? "green" : "red";
+
+      // Play/pause audio based on posture (bad => play; good => stop)
+      const isBad = cls !== 1;
+      if (isBad !== lastBadRef.current) {
+        lastBadRef.current = isBad;
+        const a = audioRef.current;
+        if (a) {
+          if (isBad) {
+            // try to play; if blocked, suggest enabling sound
+            a.loop = true;
+            a.volume = currentSettings.current
+              ? currentSettings.current.volume
+              : 1;
+            if (a.paused) {
+              void a
+                .play()
+                .then(() => {
+                  setSoundEnabled(true);
+                })
+                .catch(() => {
+                  if (!warnedUnlockRef.current) {
+                    warnedUnlockRef.current = true;
+                    toast("Enable sound", {
+                      description:
+                        "Your browser blocked autoplay. Click 'Enable Sound' to allow audio alerts.",
+                      position: "top-center",
+                    });
+                  }
+                });
+            }
+          } else {
+            if (!a.paused) {
+              a.pause();
+              a.currentTime = 0;
+            }
+          }
+        }
+      }
     }
   }
 
@@ -125,8 +178,31 @@ export default function Session() {
       if (!videoRef.current || !poseLandmarkerRef.current || !canvasRef.current)
         return;
 
-      ctx.fillStyle = "black";
-      ctx.fillRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+      // Draw either the live video frame or a black background
+      if (
+        showFeedRef.current &&
+        videoRef.current &&
+        canvasRef.current &&
+        videoRef.current.videoWidth > 0 &&
+        videoRef.current.videoHeight > 0
+      ) {
+        try {
+          ctx.drawImage(
+            videoRef.current,
+            0,
+            0,
+            canvasRef.current.width,
+            canvasRef.current.height
+          );
+        } catch {
+          // Fallback to black if drawImage fails for any reason
+          ctx.fillStyle = "black";
+          ctx.fillRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+        }
+      } else {
+        ctx.fillStyle = "black";
+        ctx.fillRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+      }
 
       const results = poseLandmarkerRef.current.detectForVideo(
         videoRef.current,
@@ -190,8 +266,11 @@ export default function Session() {
           sittingDurations.current[sittingDurations.current.length - 1].end =
             performance.now();
 
-        // The user is taking a break
-        breakDurations.current.push({ start: performance.now(), end: null });
+        // Check the settings to see if the user wants to log them not being here as a break
+        if (currentSettings.current?.noUserDetectedIsBreak) {
+          // The user is taking a break
+          breakDurations.current.push({ start: performance.now(), end: null });
+        }
         pauseAll();
       }
 
@@ -205,6 +284,27 @@ export default function Session() {
     let isMounted = true;
 
     async function init() {
+      // Load in all the settings
+      await db.settings.get(0).then((data) => {
+        if (data !== undefined) {
+          currentSettings.current = data;
+          BREAK_REMINDER_TIME = data?.breakTimeReminder;
+        }
+      });
+
+      // Prepare audio element (subtle ring hosted online)
+      if (!audioRef.current) {
+        const a = new Audio(
+          // Public subtle ring; replace with your own asset if preferred
+          "https://actions.google.com/sounds/v1/alarms/beep_short.ogg"
+        );
+        a.preload = "auto";
+        // @ts-ignore - crossOrigin exists on HTMLMediaElement
+        a.crossOrigin = "anonymous";
+        a.volume = currentSettings.current ? currentSettings.current.volume : 1;
+        audioRef.current = a;
+      }
+
       // Guard: if already initialized, skip
       if (poseLandmarkerRef.current || mediaStreamRef.current) return;
 
@@ -281,6 +381,7 @@ export default function Session() {
 
       // Save everything to Dexie
       let session: SessionInterface = {
+        id: 0,
         date: new Date(),
         duration: 0,
         timeSpentSitting: 0,
@@ -288,6 +389,8 @@ export default function Session() {
         numberOfBreaks: 0,
         breakDurations: [],
       };
+
+      session.id = session.date.getTime();
 
       for (let sittingDuration of sittingDurations.current)
         session.timeSpentSitting += // @ts-ignore
@@ -309,8 +412,6 @@ export default function Session() {
       });
       session.numberOfBreaks = breakDurations.current.length;
 
-      console.log(session);
-
       await db.sessions.add(session);
       toast.success("Successfully saved the session data!");
 
@@ -330,6 +431,17 @@ export default function Session() {
         poseLandmarkerRef.current.close();
         poseLandmarkerRef.current = null;
       }
+
+      // Stop any playing audio
+      if (audioRef.current && !audioRef.current.paused) {
+        audioRef.current.pause();
+        audioRef.current.currentTime = 0;
+      }
+
+      // Reset posture state on stop
+      lastBadRef.current = false;
+
+      return session.id;
     }
 
     if (showVideo) {
@@ -342,8 +454,7 @@ export default function Session() {
         error: "Oh no, the goodies got lost",
       });
     } else {
-      stopAll();
-      router.replace("/dashboard/session/statistics");
+      stopAll().then((id) => router.replace(`/dashboard/session/${id}`));
     }
 
     return () => {
@@ -399,6 +510,13 @@ export default function Session() {
     if (videoRef.current) {
       videoRef.current.srcObject = null;
     }
+    // Pause audio as well when pausing session
+    if (audioRef.current && !audioRef.current.paused) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+    }
+    // Reset posture state so next bad detection can re-trigger audio
+    lastBadRef.current = false;
   }
 
   // Stop session immediately: capture timestamp and cancel RAF to minimize timing drift
@@ -497,18 +615,30 @@ export default function Session() {
   return (
     <div className="w-full h-screen flex items-center justify-center relative">
       <div className="flex flex-col items-center gap-4">
-        <div className="w-full max-w-[640px] grid grid-cols-2 gap-2">
-          <Button variant="destructive" onClick={handleStop}>
+        <div className="w-full max-w-[640px]">
+          <Button variant="destructive" onClick={handleStop} className="w-full">
             Stop Session
           </Button>
+        </div>
+        <div ref={containerRef} className="">
+          <video ref={videoRef} style={{ display: "none" }} playsInline muted />
+          <canvas ref={canvasRef} width={640} height={480} />
+        </div>
+        <div className="flex gap-2 w-full">
           {paused ? (
-            <Button variant={"secondary"} onClick={() => resumeAll()}>
+            <Button
+              variant={"secondary"}
+              onClick={() => resumeAll()}
+              className="flex-1"
+            >
               Unpause
             </Button>
           ) : (
             <AlertDialog>
               <AlertDialogTrigger asChild>
-                <Button variant={"secondary"}>Pause</Button>
+                <Button variant={"secondary"} className="flex-1">
+                  Pause
+                </Button>
               </AlertDialogTrigger>
               <AlertDialogContent>
                 <AlertDialogHeader>
@@ -571,15 +701,66 @@ export default function Session() {
               </AlertDialogContent>
             </AlertDialog>
           )}
-        </div>
-        <div ref={containerRef} className="">
-          <video ref={videoRef} style={{ display: "none" }} playsInline muted />
-          <canvas
-            ref={canvasRef}
-            // TODO: Make it dynamic
-            width={640}
-            height={480}
-          />
+          {!soundEnabled ? (
+            <Button
+              variant={"secondary"}
+              onClick={async () => {
+                // Attempt to unlock audio playback
+                if (!audioRef.current) return;
+                try {
+                  if (lastBadRef.current) {
+                    // If currently bad, start the alert immediately and keep playing
+                    audioRef.current.loop = true;
+                    audioRef.current.volume = currentSettings.current
+                      ? currentSettings.current.volume
+                      : 1;
+                    await audioRef.current.play();
+                  } else {
+                    // Quick play/pause to satisfy user gesture requirement
+                    await audioRef.current.play();
+                    await new Promise((r) => setTimeout(r, 50));
+                    audioRef.current.pause();
+                    audioRef.current.currentTime = 0;
+                  }
+                  setSoundEnabled(true);
+                  warnedUnlockRef.current = true;
+                  toast.success("Sound enabled");
+                } catch {
+                  toast.error(
+                    "Unable to enable sound. Check browser settings."
+                  );
+                }
+              }}
+              className="flex-1"
+              title="Allow audio alerts if your browser blocks autoplay"
+            >
+              Enable Sound
+            </Button>
+          ) : (
+            <Button
+              variant={"secondary"}
+              onClick={async () => {
+                // Stop any playing audio and disable sound
+                if (audioRef.current && !audioRef.current.paused) {
+                  audioRef.current.pause();
+                  audioRef.current.currentTime = 0;
+                }
+                setSoundEnabled(false);
+                toast.success("Sound disabled");
+              }}
+              className="flex-1"
+              title="Disable audio alerts"
+            >
+              Disable Sound
+            </Button>
+          )}
+          <Button
+            variant={"secondary"}
+            onClick={() => setShowFeed(!showFeed)}
+            className="flex-1"
+          >
+            {showFeed ? "Hide background" : "Show background"}
+          </Button>
         </div>
       </div>
     </div>

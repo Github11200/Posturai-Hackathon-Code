@@ -21,12 +21,62 @@ import { LogoutLink } from "@kinde-oss/kinde-auth-nextjs";
 import { PortalLink } from "@kinde-oss/kinde-auth-nextjs/components";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { db } from "@/lib/db";
-import { useEffect, useRef } from "react";
+import { useState } from "react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { Linkedin, Mail, X } from "lucide-react";
 
 function Profile({ avatarUrl }: { avatarUrl: string }) {
+  const [open, setOpen] = useState(false);
   return (
     <div className="flex gap-4">
+      <AlertDialog open={open}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center justify-between">
+              <p>Contact</p>
+              <Button
+                variant={"ghost"}
+                size={"sm"}
+                className="px-0"
+                onClick={() => setOpen(false)}
+              >
+                <X />
+              </Button>
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              Hey 👋! We'd love to talk to you, feel free to reach out to us
+              using any of the contact methods below:
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="w-full flex">
+            {" "}
+            <Button asChild variant={"outline"} className="w-full flex-1">
+              <a href={"jinayunity22@gmail.com"} aria-label="Email us">
+                <Mail className="mr-2 size-4" /> Email
+              </a>
+            </Button>
+            <Button asChild variant="outline" className="w-full flex-1">
+              <a
+                // TODO: add url
+                href={""}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Find us on LinkedIn"
+              >
+                <Linkedin className="mr-2 size-4" /> LinkedIn
+              </a>
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
       <DropdownMenu>
         <DropdownMenuTrigger
           asChild
@@ -42,16 +92,27 @@ function Profile({ avatarUrl }: { avatarUrl: string }) {
             </Avatar>
           </div>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="start" sideOffset={8}>
-          <DropdownMenuItem>
+        <DropdownMenuContent
+          align="start"
+          className="text-center"
+          sideOffset={8}
+        >
+          <DropdownMenuItem className="hover:cursor-pointer">
             <PortalLink>Manage billing</PortalLink>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem>
-            <LogoutLink>Settings</LogoutLink>
+          <DropdownMenuItem className="hover:cursor-pointer">
+            <Link href="/dashboard/settings">Settings</Link>
+          </DropdownMenuItem>{" "}
+          <DropdownMenuSeparator />
+          <DropdownMenuItem
+            onClick={() => setOpen(true)}
+            className="hover:cursor-pointer"
+          >
+            Contact
           </DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem>
+          <DropdownMenuItem className="hover:cursor-pointer">
             <LogoutLink>Sign out</LogoutLink>
           </DropdownMenuItem>
         </DropdownMenuContent>
@@ -82,8 +143,21 @@ interface MenuItem {
 
 const menuItems: MenuItem[] = [
   { title: "New Session", url: "/dashboard/session", variant: "default" },
-  { title: "How Posturai works", url: "#", variant: "secondary" },
-  { title: "Why is posture important?", url: "#", variant: "secondary" },
+  {
+    title: "Previous sessions",
+    url: "/dashboard/sessions",
+    variant: "secondary",
+  },
+  {
+    title: "How Posturai works",
+    url: "/dashboard/posturai",
+    variant: "secondary",
+  },
+  {
+    title: "Why is posture important?",
+    url: "/dashboard/posture",
+    variant: "secondary",
+  },
 ];
 
 export function DashboardSidebar({ avatarUrl }: { avatarUrl: string }) {

@@ -5,25 +5,31 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { LoginLink, RegisterLink } from "@kinde-oss/kinde-auth-nextjs";
-import { PortalLink } from "@kinde-oss/kinde-auth-nextjs/components";
+import Image from "next/image";
 
 export function Navbar() {
   const [open, setOpen] = useState(false);
   return (
     <header
       className={cn(
-        "fixed mx-auto top-4 left-4 right-4 lg:w-2/3 xl:max-w-[1400px] z-50 border rounded-(--radius)"
+        "fixed mx-auto top-4 left-4 right-4 lg:w-2/3 xl:max-w-6xl z-50 border rounded-(--radius)"
       )}
     >
       <nav
-        className="relative backdrop-blur-md mx-auto max-w-7xl grid grid-cols-[1fr_1fr] lg:grid-cols-[1fr_auto_1fr] items-center px-2 py-2 md:px-4 md:py-4 rounded-(--radius)"
+        className="relative backdrop-blur-md mx-auto grid grid-cols-[1fr_1fr] lg:grid-cols-[1fr_auto_1fr] items-center px-2 py-2 md:px-4 md:py-4 rounded-(--radius)"
         aria-label="Main navigation"
       >
         <Link
           href="#"
           className="ml-2 font-semibold tracking-tight text-xl md:text-2xl text-foreground hover:text-foreground/80 transition-colors"
         >
-          Posturai
+          <Image
+            src={"/logo.png"}
+            width={50}
+            height={50}
+            alt="Logo"
+            className="rounded-full"
+          />
         </Link>
         <ul className="hidden lg:flex items-center gap-12 text-base md:text-lg font-medium">
           <li>

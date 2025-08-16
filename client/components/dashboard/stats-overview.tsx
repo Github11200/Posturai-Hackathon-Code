@@ -1,7 +1,7 @@
 "use client";
 
-import React from "react";
-import { db, type SessionInterface } from "@/lib/db";
+import React, { useEffect } from "react";
+import { db, SettingsInterface, type SessionInterface } from "@/lib/db";
 import {
   ChartContainer,
   ChartLegend,
@@ -112,6 +112,22 @@ function binValue(n: number) {
 }
 
 export default function StatsOverview() {
+  useEffect(() => {
+    const defaultSettings: SettingsInterface = {
+      id: 0,
+      breakTimeReminder: 1800000, // 30 minutes
+      noUserDetectedIsBreak: true,
+      soundEnabled: true,
+      volume: 1,
+    };
+    db.settings.count().then((entries) => {
+      if (entries === 0)
+        db.settings.add(defaultSettings).then((id) => {
+          console.log("added entry!");
+        });
+    });
+  });
+
   const { sessions, loading } = useAllSessions();
 
   const sessionsSorted = React.useMemo(() => {
@@ -390,7 +406,9 @@ export default function StatsOverview() {
       <Card className="min-w-0">
         <CardHeader>
           <CardTitle>Weekly sitting vs breaks</CardTitle>
-          <CardDescription>Totals grouped by week (Mon start)</CardDescription>
+          <CardDescription>
+            Totals grouped by week (Monday start)
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <ChartContainer
@@ -579,89 +597,6 @@ export default function StatsOverview() {
           </CardContent>
         </Card>
       </div>
-
-      {/* All sessions details */}
-      <Card className="min-w-0">
-        <CardHeader>
-          <CardTitle>All sessions</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 gap-4">
-            {sessionsSorted.map((s, idx) => {
-              const d = toDateSafe(s.date);
-              const dateStr = d ? d.toLocaleString() : "";
-              const breakSeconds = sum((s.breakDurations || []) as number[]);
-              return (
-                <div key={idx} className="rounded-md border p-3">
-                  <div className="grid grid-cols-1 gap-3 md:grid-cols-3 lg:grid-cols-6">
-                    <div>
-                      <div className="text-xs text-muted-foreground">Date</div>
-                      <div className="font-medium">{dateStr}</div>
-                    </div>
-                    <div>
-                      <div className="text-xs text-muted-foreground">
-                        Duration
-                      </div>
-                      <div className="font-medium">
-                        {formatDuration(s.duration)}
-                      </div>
-                    </div>
-                    <div>
-                      <div className="text-xs text-muted-foreground">
-                        Sitting
-                      </div>
-                      <div className="font-medium">
-                        {formatDuration(s.timeSpentSitting)}
-                      </div>
-                    </div>
-                    <div>
-                      <div className="text-xs text-muted-foreground">
-                        # Breaks
-                      </div>
-                      <div className="font-medium">{s.numberOfBreaks}</div>
-                    </div>
-                    <div>
-                      <div className="text-xs text-muted-foreground">
-                        Break time
-                      </div>
-                      <div className="font-medium">
-                        {formatDuration(breakSeconds)}
-                      </div>
-                    </div>
-                  </div>
-                  <Separator className="my-3" />
-                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                    <div>
-                      <div className="text-xs text-muted-foreground">
-                        Sitting intervals
-                      </div>
-                      <div className="text-xs break-words">
-                        {(s.sittingDurations || []).length
-                          ? (s.sittingDurations || [])
-                              .map((v) => formatDuration(v))
-                              .join(", ")
-                          : "—"}
-                      </div>
-                    </div>
-                    <div>
-                      <div className="text-xs text-muted-foreground">
-                        Break intervals
-                      </div>
-                      <div className="text-xs break-words">
-                        {(s.breakDurations || []).length
-                          ? (s.breakDurations || [])
-                              .map((v) => formatDuration(v))
-                              .join(", ")
-                          : "—"}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </CardContent>
-      </Card>
     </div>
   );
 }

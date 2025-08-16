@@ -19,8 +19,8 @@ export function ContactSection() {
       aria-labelledby="contact-heading"
     >
       <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
-        <div className="absolute -top-10 -right-16 w-72 h-72 bg-linear-to-br from-emerald-400/10 via-green-400/10 to-teal-400/10 rounded-full blur-3xl" />
-        <div className="absolute -bottom-10 -left-16 w-72 h-72 bg-linear-to-br from-lime-400/10 via-emerald-400/10 to-green-400/10 rounded-full blur-3xl" />
+        <div className="absolute -top-10 -right-16 w-72 h-72 bg-linear-to-br from-emerald-400/10 to-primary/50 rounded-full blur-3xl" />
+        <div className="absolute -bottom-10 -left-16 w-72 h-72 bg-linear-to-br from-lime-400/10 to-primary/20 rounded-full blur-3xl" />
       </div>
 
       <div className="mx-auto w-full max-w-3xl">

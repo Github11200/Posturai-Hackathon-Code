@@ -3,9 +3,12 @@ import { redirect } from "next/navigation";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { DashboardSidebar } from "../../components/dashboard/sidebar";
 import StatsOverview from "../../components/dashboard/stats-overview";
-import { db, SettingsInterface } from "@/lib/db";
 
-export default async function Dashboard() {
+export default async function Layout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const { isAuthenticated, getAccessTokenRaw } = getKindeServerSession();
   if (!(await isAuthenticated())) redirect("/api/auth/login");
 
@@ -22,12 +25,13 @@ export default async function Dashboard() {
 
   return (
     <div className="h-screen w-full max-w-full min-w-0">
-      <h1 className="scroll-m-20 text-center text-4xl font-extrabold tracking-tight text-balance mx-auto mb-6">
-        Welcome {data.given_name}!
-      </h1>
-      <div className="container mx-auto w-full max-w-6xl min-w-0">
-        <StatsOverview />
-      </div>
+      <SidebarProvider defaultOpen>
+        <DashboardSidebar avatarUrl={data.picture} />
+        <main className="w-full p-4 min-w-0">
+          <SidebarTrigger />
+          {children}
+        </main>
+      </SidebarProvider>
     </div>
   );
 }

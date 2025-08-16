@@ -28,7 +28,7 @@ export default function AboutPosturai() {
           <li>Let all the goodies load :)</li>
           <li>
             Just do whatever you're doing (vibe coding, emails, touching
-            grass???). We'll make sure your back does turn into a Fibonacci
+            grass???). We'll make sure your back doesn't turn into a Fibonacci
             circle{" "}
             <button
               className="p-0 m-0 gap-0 h-4 hover:cursor-pointer"

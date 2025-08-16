@@ -308,8 +308,10 @@ export default function Session() {
       // Guard: if already initialized, skip
       if (poseLandmarkerRef.current || mediaStreamRef.current) return;
 
+      console.log("model 2 loaded!");
+
       onnxSessionRef.current = await ort.InferenceSession.create(
-        "/model.onnx",
+        "/model2.onnx",
         {
           executionProviders: ["wasm"],
         }

@@ -27,6 +27,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import GoodBadOverview from "./good-bad-overview";
 
 function useAllSessions() {
   const [sessions, setSessions] = React.useState<SessionInterface[]>([]);
@@ -401,6 +402,8 @@ export default function StatsOverview() {
           </CardContent>
         </Card>
       </div>
+
+      <GoodBadOverview />
 
       {/* Weekly sitting vs breaks */}
       <Card className="min-w-0">

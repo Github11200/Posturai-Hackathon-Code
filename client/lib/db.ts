@@ -8,6 +8,7 @@ interface SessionInterface {
   sittingDurations: number[];
   numberOfBreaks: number;
   breakDurations: number[];
+  badPostureDurations: number[];
 };
 
 interface SettingsInterface {

@@ -59,7 +59,10 @@ export default function Session() {
 
   const breakDurations = useRef<Duration[]>([]);
   const sittingDurations = useRef<Duration[]>([]);
+  const badPostureDurations = useRef<Duration[]>([]);
   const toastedTime = useRef<number | null>(null);
+
+  const previousOutput = useRef<number>(-1);
 
   const router = useRouter();
   const [showVideo, setShowVideo] = useState<boolean>(true);
@@ -121,6 +124,25 @@ export default function Session() {
       // @ts-ignore
       const cls = Math.round(argMax(softmax(out.cpuData as Float32Array)));
       color.current = cls === 1 ? "green" : "red";
+
+      if (previousOutput.current !== -1 && cls != previousOutput.current) {
+        if (previousOutput.current == 1)
+          badPostureDurations.current.push({
+            start: performance.now(),
+            end: null,
+          });
+        else if (
+          badPostureDurations.current.length > 0 &&
+          badPostureDurations.current[badPostureDurations.current.length - 1]
+            .end === null
+        )
+          badPostureDurations.current[
+            badPostureDurations.current.length - 1
+          ].end = performance.now();
+
+        console.log("updated bad posture durations");
+        previousOutput.current = cls;
+      } else previousOutput.current = cls;
 
       // Play/pause audio based on posture (bad => play; good => stop)
       const isBad = cls !== 1;
@@ -308,10 +330,10 @@ export default function Session() {
       // Guard: if already initialized, skip
       if (poseLandmarkerRef.current || mediaStreamRef.current) return;
 
-      console.log("model 2 loaded!");
+      console.log("latest model loaded!");
 
       onnxSessionRef.current = await ort.InferenceSession.create(
-        "/model2.onnx",
+        "/model.onnx",
         {
           executionProviders: ["wasm"],
         }
@@ -390,6 +412,7 @@ export default function Session() {
         sittingDurations: [],
         numberOfBreaks: 0,
         breakDurations: [],
+        badPostureDurations: [],
       };
 
       session.id = session.date.getTime();
@@ -412,6 +435,15 @@ export default function Session() {
         session.duration += duration;
         return duration;
       });
+      console.log(badPostureDurations);
+
+      session.badPostureDurations = badPostureDurations.current.map(
+        (badPostureDuration) => {
+          const duration = // @ts-ignore
+            (badPostureDuration.end - badPostureDuration.start) / 1000;
+          return duration;
+        }
+      );
       session.numberOfBreaks = breakDurations.current.length;
 
       await db.sessions.add(session);

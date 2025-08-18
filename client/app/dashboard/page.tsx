@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { DashboardSidebar } from "../../components/dashboard/sidebar";
 import StatsOverview from "../../components/dashboard/stats-overview";
+import GoodBadOverview from "../../components/dashboard/good-bad-overview";
 import { db, SettingsInterface } from "@/lib/db";
 
 export default async function Dashboard() {
@@ -25,7 +26,7 @@ export default async function Dashboard() {
       <h1 className="scroll-m-20 text-center text-4xl font-extrabold tracking-tight text-balance mx-auto mb-6">
         Welcome {data.given_name}!
       </h1>
-      <div className="container mx-auto w-full max-w-6xl min-w-0 pb-8">
+      <div className="container mx-auto w-full max-w-6xl min-w-0 pb-8 space-y-8">
         <StatsOverview />
       </div>
     </div>

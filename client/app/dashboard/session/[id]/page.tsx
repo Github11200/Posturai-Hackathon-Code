@@ -98,6 +98,14 @@ export default function SessionStatisticsPage() {
     0
   );
   const sittingSeconds = latest.timeSpentSitting ?? 0;
+  const totalBadPostureSeconds = (latest.badPostureDurations || []).reduce(
+    (a, b) => a + (b || 0),
+    0
+  );
+  const goodPostureSeconds = Math.max(
+    0,
+    sittingSeconds - totalBadPostureSeconds
+  );
   const totalDurationSeconds = latest.duration ?? 0;
   const dateStr = latest.date
     ? new Date(latest.date as unknown as string).toLocaleString()
@@ -111,12 +119,13 @@ export default function SessionStatisticsPage() {
 
   const avgSittingSeconds = avg(latest.sittingDurations || []);
   const avgBreakSeconds = avg(latest.breakDurations || []);
+  const avgBadPostureSeconds = avg(latest.badPostureDurations || []);
 
-  const mainChartData = [
+  const postureChartData = [
     {
       label: "Latest Session",
-      sitting: chartMinutes(sittingSeconds),
-      breaks: chartMinutes(totalBreakSeconds),
+      good: chartMinutes(goodPostureSeconds),
+      bad: chartMinutes(totalBadPostureSeconds),
     },
   ];
 
@@ -129,6 +138,12 @@ export default function SessionStatisticsPage() {
     name: `#${i + 1}`,
     minutes: chartMinutes(v),
   }));
+  const badPostureIntervals = (latest.badPostureDurations || []).map(
+    (v, i) => ({
+      name: `#${i + 1}`,
+      minutes: chartMinutes(v),
+    })
+  );
 
   return (
     <div className="mx-auto grid gap-6 p-6 w-full max-w-full">
@@ -158,24 +173,24 @@ export default function SessionStatisticsPage() {
 
         <Card className="min-w-0">
           <CardHeader>
-            <CardTitle className="text-base">Time sitting</CardTitle>
-            <CardDescription>Active sitting time</CardDescription>
+            <CardTitle className="text-base">Good posture</CardTitle>
+            <CardDescription>Time with good posture</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold">
-              {formatDuration(sittingSeconds)}
+              {formatDuration(goodPostureSeconds)}
             </div>
           </CardContent>
         </Card>
 
         <Card className="min-w-0">
           <CardHeader>
-            <CardTitle className="text-base">Break time</CardTitle>
-            <CardDescription>Sum of breaks</CardDescription>
+            <CardTitle className="text-base">Bad posture</CardTitle>
+            <CardDescription>Total bad posture time</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold">
-              {formatDuration(totalBreakSeconds)}
+              {formatDuration(totalBadPostureSeconds)}
             </div>
           </CardContent>
         </Card>
@@ -193,24 +208,24 @@ export default function SessionStatisticsPage() {
 
       <Card className="col-span-1 min-w-0">
         <CardHeader>
-          <CardTitle>Time sitting vs breaks</CardTitle>
+          <CardTitle>Good vs bad posture</CardTitle>
           <CardDescription>Minutes in latest session</CardDescription>
         </CardHeader>
         <CardContent>
           <ChartContainer
             config={{
-              sitting: {
-                label: "Sitting (min)",
-                color: "#3b82f6",
+              good: {
+                label: "Good posture (min)",
+                color: "#22c55e",
               },
-              breaks: {
-                label: "Breaks (min)",
-                color: "#f97316",
+              bad: {
+                label: "Bad posture (min)",
+                color: "#ef4444",
               },
             }}
             className="h-72 w-full max-w-full"
           >
-            <BarChart data={mainChartData}>
+            <BarChart data={postureChartData}>
               <CartesianGrid vertical={false} strokeDasharray="3 3" />
               <XAxis
                 dataKey="label"
@@ -222,13 +237,13 @@ export default function SessionStatisticsPage() {
               <ChartTooltip content={<ChartTooltipContent />} />
               <ChartLegend content={<ChartLegendContent />} />
               <Bar
-                dataKey="sitting"
-                fill="var(--color-sitting)"
+                dataKey="good"
+                fill="var(--color-good)"
                 radius={[6, 6, 0, 0]}
               />
               <Bar
-                dataKey="breaks"
-                fill="var(--color-breaks)"
+                dataKey="bad"
+                fill="var(--color-bad)"
                 radius={[6, 6, 0, 0]}
               />
             </BarChart>
@@ -314,6 +329,45 @@ export default function SessionStatisticsPage() {
 
       <Card className="min-w-0">
         <CardHeader>
+          <CardTitle>Bad posture intervals</CardTitle>
+          <CardDescription>
+            Average {formatDuration(avgBadPostureSeconds)} •{" "}
+            {badPostureIntervals.length} intervals
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {badPostureIntervals.length === 0 ? (
+            <div className="text-sm text-muted-foreground">
+              No bad posture detected
+            </div>
+          ) : (
+            <ChartContainer
+              config={{ minutes: { label: "Minutes", color: "#ef4444" } }}
+              className="h-64 w-full max-w-full"
+            >
+              <BarChart data={badPostureIntervals}>
+                <CartesianGrid vertical={false} strokeDasharray="3 3" />
+                <XAxis
+                  dataKey="name"
+                  tickLine={false}
+                  axisLine={false}
+                  tickMargin={8}
+                />
+                <YAxis tickLine={false} axisLine={false} tickMargin={8} />
+                <Tooltip content={<ChartTooltipContent nameKey="name" />} />
+                <Bar
+                  dataKey="minutes"
+                  fill="var(--color-minutes)"
+                  radius={[4, 4, 0, 0]}
+                />
+              </BarChart>
+            </ChartContainer>
+          )}
+        </CardContent>
+      </Card>
+
+      <Card className="min-w-0">
+        <CardHeader>
           <CardTitle>Details</CardTitle>
           <CardDescription>All fields for the latest session</CardDescription>
         </CardHeader>
@@ -340,6 +394,18 @@ export default function SessionStatisticsPage() {
               <div className="font-medium">{latest.numberOfBreaks}</div>
             </div>
             <div>
+              <div className="text-sm text-muted-foreground">Good posture</div>
+              <div className="font-medium">
+                {formatDuration(goodPostureSeconds)}
+              </div>
+            </div>
+            <div>
+              <div className="text-sm text-muted-foreground">Bad posture</div>
+              <div className="font-medium">
+                {formatDuration(totalBadPostureSeconds)}
+              </div>
+            </div>
+            <div>
               <div className="text-sm text-muted-foreground">Avg sitting</div>
               <div className="font-medium">
                 {formatDuration(avgSittingSeconds)}
@@ -349,6 +415,14 @@ export default function SessionStatisticsPage() {
               <div className="text-sm text-muted-foreground">Avg break</div>
               <div className="font-medium">
                 {formatDuration(avgBreakSeconds)}
+              </div>
+            </div>
+            <div>
+              <div className="text-sm text-muted-foreground">
+                Avg bad posture
+              </div>
+              <div className="font-medium">
+                {formatDuration(avgBadPostureSeconds)}
               </div>
             </div>
           </div>

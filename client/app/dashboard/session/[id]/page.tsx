@@ -97,11 +97,12 @@ export default function SessionStatisticsPage() {
     (a, b) => a + (b || 0),
     0
   );
-  const sittingSeconds = latest.timeSpentSitting ?? 0;
-  const totalBadPostureSeconds = (latest.badPostureDurations || []).reduce(
-    (a, b) => a + (b || 0),
-    0
+  const sittingSeconds = Math.max(0, latest.timeSpentSitting ?? 0);
+  const badDurationsClamped = (latest.badPostureDurations || []).map((v) =>
+    Math.max(0, v || 0)
   );
+  const rawBadPostureSeconds = badDurationsClamped.reduce((a, b) => a + b, 0);
+  const totalBadPostureSeconds = Math.min(rawBadPostureSeconds, sittingSeconds);
   const goodPostureSeconds = Math.max(
     0,
     sittingSeconds - totalBadPostureSeconds
@@ -119,7 +120,7 @@ export default function SessionStatisticsPage() {
 
   const avgSittingSeconds = avg(latest.sittingDurations || []);
   const avgBreakSeconds = avg(latest.breakDurations || []);
-  const avgBadPostureSeconds = avg(latest.badPostureDurations || []);
+  const avgBadPostureSeconds = avg(badDurationsClamped);
 
   const postureChartData = [
     {
@@ -138,12 +139,10 @@ export default function SessionStatisticsPage() {
     name: `#${i + 1}`,
     minutes: chartMinutes(v),
   }));
-  const badPostureIntervals = (latest.badPostureDurations || []).map(
-    (v, i) => ({
-      name: `#${i + 1}`,
-      minutes: chartMinutes(v),
-    })
-  );
+  const badPostureIntervals = badDurationsClamped.map((v, i) => ({
+    name: `#${i + 1}`,
+    minutes: chartMinutes(v),
+  }));
 
   return (
     <div className="mx-auto grid gap-6 p-6 w-full max-w-full">

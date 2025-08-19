@@ -47,7 +47,7 @@ export default function PricingSection() {
             </div>
 
             <div className="mt-6 flex items-end gap-2">
-              <span className="text-5xl font-bold tracking-tight">$9</span>
+              <span className="text-5xl font-bold tracking-tight">$3</span>
               <span className="pb-1 text-muted-foreground">/month</span>
             </div>
 

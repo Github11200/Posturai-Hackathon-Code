@@ -34,14 +34,6 @@ export function Navbar() {
         <ul className="hidden lg:flex items-center gap-12 text-base md:text-lg font-medium">
           <li>
             <Link
-              href="#about"
-              className="text-muted-foreground text-lg px-4 transition-colors hover:text-foreground/90"
-            >
-              About
-            </Link>
-          </li>
-          <li>
-            <Link
               href="#features"
               className="text-muted-foreground text-lg px-4 transition-colors hover:text-foreground/90"
             >

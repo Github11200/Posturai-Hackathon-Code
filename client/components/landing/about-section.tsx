@@ -2,7 +2,7 @@ import Image from "next/image";
 
 export default function AboutSection() {
   return (
-    <div className="contents sm:block" id="about">
+    <div className="contents sm:block" id="features">
       {/* Real-time posture monitoring */}
       <section
         id="about"

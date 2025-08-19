@@ -18,8 +18,18 @@ export default function HeroSection() {
             needs improvement and get your spine back.
           </p>
           <div className="w-full flex justify-center">
-            <div className="relative w-[clamp(240px,70vw,720px)] aspect-video rounded-[calc(var(--radius)*2)] border border-border/60 bg-card/40 shadow-inner overflow-hidden flex items-center justify-center text-muted-foreground text-sm">
-              Video Placeholder
+            <div className="relative w-full max-w-[clamp(320px,92vw,1100px)] aspect-video rounded-[calc(var(--radius)*2)] border border-border/60 bg-card/40 shadow-inner overflow-hidden">
+              <video
+                className="w-full h-full object-cover rounded-[calc(var(--radius)*2)]"
+                autoPlay
+                muted
+                loop
+                playsInline
+                preload="metadata"
+              >
+                <source src="/landing/demo.mp4" type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
             </div>
           </div>
         </div>
